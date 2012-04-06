@@ -1,6 +1,7 @@
 var express = require('express')
   , app = express.createServer()
   , nodemailer = require('nodemailer')
+  , config = require('./config.js')
 
 var redis;
 if (process.env.NODE_ENV == 'production')
@@ -15,13 +16,6 @@ app.set('view engine', 'jade');
 app.use(express.cookieParser());
 app.use(express.static(__dirname + '/public'));
 app.use(express.bodyParser());
-
-var config =  {
-  aws: {
-    access: 'AKIAJAJN2G22O42XJODQ',
-    secret: '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',
-   },
-};
 
 // App
 
