@@ -29,20 +29,20 @@ app.post('/text', function(req, res) {
 
   redis.incr(keystr, function(err, num) {
     if (err) {
-      res.send({success:false,msg:'Could not validate IP quota.'});
+      res.send({success:false,message:'Could not validate IP quota.'});
       return;
     }
 
     if (num < 51) {
-      sendText(req.body.number, req.body.msg, function(err) {
+      sendText(req.body.number, req.body.message, function(err) {
         if (err)
-          res.send({success:false,msg:'Communication with SMS gateway failed.'});
+          res.send({success:false,message:'Communication with SMS gateway failed.'});
         else
           res.send({success:true});
       });
     }
     else {
-      res.send({success:false,msg:'Exceeded quota.'});
+      res.send({success:false,message:'Exceeded quota.'});
     }
   });
 });
@@ -55,7 +55,7 @@ function dateStr() {
   return mm + '/' + dd + '/' + yyyy;
 }
 
-function sendText(phone, msg, cb) {
+function sendText(phone, message, cb) {
   var transport = nodemailer.createTransport("SES", {
     AWSAccessKeyID: config.aws.access,
     AWSSecretKey: config.aws.secret,
@@ -66,7 +66,7 @@ function sendText(phone, msg, cb) {
     from: "txt@textbelt.com", // sender address
     to: '9147727429@vtext.com',
     subject: '', // Subject line
-    text: msg,
+    text: message,
   }
 
   nodemailer.sendMail(mailOptions, function(error){
