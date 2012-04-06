@@ -1,6 +1,7 @@
 var express = require('express')
   , app = express.createServer()
   , nodemailer = require('nodemailer')
+  , redis = require('redis')
 
 // Express config
 app.set('views', __dirname + '/views');
@@ -27,15 +28,37 @@ app.get('/', function(req, res) {
 });
 
 app.post('/text', function(req, res) {
-  if (true) {
-    sendText(req.body.number, req.body.msg, function(err) {
-      if (err)
-        res.send({success:false});
-      else
-        res.send({success:true});
-    });
-  }
+  var keystr = req.connection.remoteAddress + '_' + dateStr();
+
+  var rclient = redis.createClient();
+  rclient.incr(keystr, function(err, num) {
+    rclient.quit();
+
+    if (err) {
+      res.send({success:false,msg:'Could not validate IP quota.'});
+      return;
+    }
+    if (num < 51) {
+      sendText(req.body.number, req.body.msg, function(err) {
+        if (err)
+          res.send({success:false,msg:'Communication with SMS gateway failed.'});
+        else
+          res.send({success:true});
+      });
+    }
+    else {
+      res.send({success:false,msg:'Exceeded quota.'});
+    }
+  });
 });
+
+function dateStr() {
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth()+1;
+  var yyyy = today.getFullYear();
+  return mm + '/' + dd + '/' + yyyy;
+}
 
 function sendText(phone, msg, cb) {
   var transport = nodemailer.createTransport("SES", {
