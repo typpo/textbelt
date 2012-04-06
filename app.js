@@ -1,7 +1,12 @@
 var express = require('express')
   , app = express.createServer()
   , nodemailer = require('nodemailer')
-  , redis = require('redis')
+
+var redis;
+if (process.env.NODE_ENV == 'production')
+  redis = require('redis-url').connect(process.env.REDISTOGO_URL);
+else
+  redis = require('redis-url').connect();
 
 // Express config
 app.set('views', __dirname + '/views');
@@ -30,14 +35,12 @@ app.get('/', function(req, res) {
 app.post('/text', function(req, res) {
   var keystr = req.connection.remoteAddress + '_' + dateStr();
 
-  var rclient = redis.createClient();
-  rclient.incr(keystr, function(err, num) {
-    rclient.quit();
-
+  redis.incr(keystr, function(err, num) {
     if (err) {
       res.send({success:false,msg:'Could not validate IP quota.'});
       return;
     }
+
     if (num < 51) {
       sendText(req.body.number, req.body.msg, function(err) {
         if (err)

@@ -4,7 +4,7 @@
       "express": "2.5.2"
       , "jade": "0.14.2"
       , "nodemailer": "latest"
-      , "redis": "latest"
+      , "redis-url": "latest"
     }
   , "devDependencies": {
     }
