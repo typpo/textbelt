@@ -27,9 +27,7 @@ var config =  {
 
 /* Homepage */
 app.get('/', function(req, res) {
-  res.render('index', {
-
-  });
+  res.send("it's running");
 });
 
 app.post('/text', function(req, res) {
