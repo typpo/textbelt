@@ -26,30 +26,43 @@ app.get('/', function(req, res) {
   });
 });
 
+app.post('/text', function(req, res) {
+  if (true) {
+    sendText(req.body.number, req.body.msg, function(err) {
+      if (err)
+        res.send({success:false});
+      else
+        res.send({success:true});
+    });
+  }
+});
+
+function sendText(phone, msg, cb) {
   var transport = nodemailer.createTransport("SES", {
     AWSAccessKeyID: config.aws.access,
-      AWSSecretKey: config.aws.secret,
+    AWSSecretKey: config.aws.secret,
   });
-
 
   var mailOptions = {
     transport: transport, // transport method to use
-    from: "testing@airtext.com", // sender address
+    from: "txt@textbelt.com", // sender address
     to: '9147727429@vtext.com',
     subject: '', // Subject line
-    text: 'testtingg',  // plaintext body
+    text: msg,
   }
 
   nodemailer.sendMail(mailOptions, function(error){
     if (error) {
       console.log(error);
+      cb(true);
     }
     else {
       console.log("Message sent!");
-      cb();
+      cb(false);
     }
     transport.close(function(){}); // shut down the connection pool
   });
+}
 
 var port = process.env.PORT || 8080;
 app.listen(port, function() {

@@ -1,5 +1,5 @@
 {
-    "name": "AirText"
+    "name": "TextBelt"
   , "dependencies": {
       "express": "2.5.2"
       , "jade": "0.14.2"
