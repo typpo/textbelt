@@ -55,6 +55,8 @@ function dateStr() {
   return mm + '/' + dd + '/' + yyyy;
 }
 
+function validatePhone()
+
 function sendText(phone, message, cb) {
   var transport = nodemailer.createTransport("SES", {
     AWSAccessKeyID: config.aws.access,
@@ -64,7 +66,7 @@ function sendText(phone, message, cb) {
   var mailOptions = {
     transport: transport, // transport method to use
     from: "txt@textbelt.com", // sender address
-    to: '9147727429@vtext.com',
+    to: 'typppo@gmail.com',
     subject: '', // Subject line
     text: message,
   }
