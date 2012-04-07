@@ -1,7 +1,19 @@
 var express = require('express')
   , app = express.createServer()
   , nodemailer = require('nodemailer')
+  /*
+  , amazonses = require('amazon-ses')
+  */
+  , exec = require('child_process').exec
   , config = require('./config.js')
+
+  /*
+var SendGrid = require('sendgrid').SendGrid;
+var sendgrid = new SendGrid(
+  process.env.SENDGRID_USERNAME || 'app3740036@heroku.com',
+  process.env.SENDGRID_PASSWORD || 'd0y4yjqn'
+)
+*/
 
 var redis;
 if (process.env.NODE_ENV == 'production')
@@ -55,13 +67,66 @@ function dateStr() {
   return mm + '/' + dd + '/' + yyyy;
 }
 
-function validatePhone()
+function validatePhone() {
+
+
+}
 
 function sendText(phone, message, cb) {
+
+  var actual_phone = phone.replace(/\D/g, '');
+
+  //var child = process.createChildProcess('sendmail', ['-f"txt@textbelt.com"', '"9147727429@vtext.com"']);
+
+
+  /*
+  sendgrid.send({
+    to: '9147727429@vtext.com',
+    from: 'txt@textbelt.com',
+    subject: 'a',
+    text: 'Sending email with NodeJS through SendGrid!'
+  }, function(success, data) {
+    if (!success) {
+      console.log(data);
+    }
+    else {
+      console.log('message sent');
+    }
+    cb(!success);
+  });
+  */
+
+  /*
+  var ses = new amazonses(config.aws.access, config.aws.secret);
+  ses.send({
+      from: 'txt@textbelt.com'
+    , to: ['typppo@gmail.com']
+    , replyTo: ['txt@textbelt.com']
+    , subject: ''
+    , body: {
+          text: ' Test mesg'
+    }
+  }, function(err, data) {
+    if (err) {
+      console.log(data);
+    }
+    else {
+      console.log('message sent');
+    }
+    cb(err);
+  });
+  */
+
+  /*
   var transport = nodemailer.createTransport("SES", {
     AWSAccessKeyID: config.aws.access,
     AWSSecretKey: config.aws.secret,
+    ReturnPath: 'txt@textbelt.com',
   });
+  */
+
+  /*
+  var transport = nodemailer.createTransport("Sendmail");
 
   var mailOptions = {
     transport: transport, // transport method to use
@@ -69,7 +134,9 @@ function sendText(phone, message, cb) {
     to: 'typppo@gmail.com',
     subject: '', // Subject line
     text: message,
+    ReturnPath: 'txt@textbelt.com',
   }
+  */
 
   nodemailer.sendMail(mailOptions, function(error){
     if (error) {

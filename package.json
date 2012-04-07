@@ -5,6 +5,8 @@
       , "jade": "0.14.2"
       , "nodemailer": "latest"
       , "redis-url": "latest"
+      , "amazon-ses": "latest"
+      , "sendgrid": "latest"
     }
   , "devDependencies": {
     }
