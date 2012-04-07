@@ -1,6 +1,7 @@
 var express = require('express')
   , app = express.createServer()
   , nodemailer = require('nodemailer')
+  , _ = require('underscore')
   /*
   , amazonses = require('amazon-ses')
   */
@@ -8,6 +9,7 @@ var express = require('express')
   , spawn = require('child_process').spawn
   , Stream = require('stream')
   , config = require('./config.js')
+  , providers = require('./providers.js').list
 
   /*
 var SendGrid = require('sendgrid').SendGrid;
@@ -41,24 +43,51 @@ app.get('/', function(req, res) {
 app.post('/text', function(req, res) {
   var keystr = req.connection.remoteAddress + '_' + dateStr();
 
-  redis.incr(keystr, function(err, num) {
+  var number = stripPhone(req.body.number);
+  if (number.length < 9 || number.length > 10) {
+    res.send({success:false,message:'Invalid phone number.'});
+    return;
+  }
+
+  redis.incr('phone:' + number, function(err, num) {
     if (err) {
-      res.send({success:false,message:'Could not validate IP quota.'});
+      res.send({success:false,message:'Could not validate phone# quota.'});
       return;
     }
 
-    if (num < 501) {
+    setTimeout(function() {
+      redis.decr('phone:' + number, function(err, num) {
+        if (err) {
+          console.log('*** WARNING failed to decr ' + number);
+        }
+      });
+    }, 1000*60*3);
+    if (num > 3) {
+      res.send({success:false,message:'Exceeded quota for this phone number.'});
+      return;
+    }
+
+    // now check against ip quota
+    redis.incr(keystr, function(err, num) {
+      if (err) {
+        res.send({success:false,message:'Could not validate IP quota.'});
+        return;
+      }
+      if (num > 500) {
+        res.send({success:false,message:'Exceeded quota for this IP address.'});
+        return;
+      }
+
       sendText(req.body.number, req.body.message, function(err) {
         if (err)
           res.send({success:false,message:'Communication with SMS gateway failed.'});
         else
           res.send({success:true});
       });
-    }
-    else {
-      res.send({success:false,message:'Exceeded quota.'});
-    }
+    });
+
   });
+
 });
 
 function dateStr() {
@@ -69,27 +98,37 @@ function dateStr() {
   return mm + '/' + dd + '/' + yyyy;
 }
 
-function validatePhone() {
+function stripPhone(phone) {
+  return phone.replace(/\D/g, '');
+}
 
+function validatePhone(phone) {
 
 }
 
 function sendText(phone, message, cb) {
-
-  var actual_phone = phone.replace(/\D/g, '');
-  console.log('txting phone', actual_phone);
+  console.log('txting phone', phone);
   console.log('msg', message);
 
-  //var child = process.createChildProcess('sendmail', ['-f"txt@textbelt.com"', '"9147727429@vtext.com"']);
-  var child = spawn('sendmail', ['-f', 'txt@textbelt.com', '9147727429@vtext.com']);
-  child.stdout.on('data', console.log);
-  child.stderr.on('data', console.log);
-  child.on('error', console.log);
-  child.on('exit', function(code, signal) {
-    cb(code !== 0);
+
+  var done = _.after(providers.length, function() {
+    cb(false);
   });
-  child.stdin.write('testiiii', 'binary');
-  child.stdin.end();
+
+
+  for (var i=0; i < providers.length; i++) {
+    var provider = providers[i];
+    var email = provider.replace('%s', phone);
+    var child = spawn('sendmail', ['-f', 'txt@textbelt.com', email]);
+    child.stdout.on('data', console.log);
+    child.stderr.on('data', console.log);
+    child.on('error', console.log);
+    child.on('exit', function(code, signal) {
+      done();
+    });
+    child.stdin.write(message + '\n.');
+    child.stdin.end();
+  }
 
 
   /*
