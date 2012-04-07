@@ -86,7 +86,7 @@ mpq.track('text',
         res.send({success:false,message:'Could not validate IP quota.'});
         return;
       }
-      if (num > 500) {
+      if (num > 75) {
         mpq.track('exceeded ip quota');
         res.send({success:false,message:'Exceeded quota for this IP address.'});
         return;
