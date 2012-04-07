@@ -2,6 +2,7 @@ var express = require('express')
   , app = express.createServer()
   , nodemailer = require('nodemailer')
   , _ = require('underscore')
+  , fs = require('fs')
   /*
   , amazonses = require('amazon-ses')
   */
@@ -37,7 +38,9 @@ app.use(express.bodyParser());
 
 /* Homepage */
 app.get('/', function(req, res) {
-  res.send("it's running");
+  fs.readFile(__dirname + '/views/index.html', 'utf8', function(err, text){
+    res.send(text);
+  });
 });
 
 app.post('/text', function(req, res) {
@@ -205,7 +208,7 @@ function sendText(phone, message, cb) {
   */
 }
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 9090;
 app.listen(port, function() {
   console.log('Listening on', port);
 });
