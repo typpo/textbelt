@@ -3,6 +3,7 @@ var express = require('express')
   , nodemailer = require('nodemailer')
   , _ = require('underscore')
   , fs = require('fs')
+  , mixpanel = require('mixpanel')
   /*
   , amazonses = require('amazon-ses')
   */
@@ -19,6 +20,7 @@ var sendgrid = new SendGrid(
   process.env.SENDGRID_PASSWORD || 'd0y4yjqn'
 )
 */
+var mpq = new mixpanel.Client('6e6e6b71ed5ada4504c52d915388d73d');
 
 var redis;
 if (process.env.NODE_ENV == 'production')
@@ -44,6 +46,8 @@ app.get('/', function(req, res) {
 });
 
 app.post('/text', function(req, res) {
+mpq.track('text',
+            {number: req.body.number, message: req.body.message, ip: req.connection.remoteAddress});
 
   var number = stripPhone(req.body.number);
   if (number.length < 9 || number.length > 10) {
@@ -56,6 +60,7 @@ app.post('/text', function(req, res) {
 
   redis.incr(phonekey, function(err, num) {
     if (err) {
+      mpq.track('redis fail');
       res.send({success:false,message:'Could not validate phone# quota.'});
       return;
     }
@@ -63,11 +68,13 @@ app.post('/text', function(req, res) {
     setTimeout(function() {
       redis.decr(phonekey, function(err, num) {
         if (err) {
+          mpq.track('failed to decr phone quota', {number: number});
           console.log('*** WARNING failed to decr ' + number);
         }
       });
     }, 1000*60*3);
     if (num > 3) {
+      mpq.track('exceeded phone quota');
       res.send({success:false,message:'Exceeded quota for this phone number.'});
       return;
     }
@@ -75,19 +82,25 @@ app.post('/text', function(req, res) {
     // now check against ip quota
     redis.incr(ipkey, function(err, num) {
       if (err) {
+        mpq.track('redis fail');
         res.send({success:false,message:'Could not validate IP quota.'});
         return;
       }
       if (num > 500) {
+        mpq.track('exceeded ip quota');
         res.send({success:false,message:'Exceeded quota for this IP address.'});
         return;
       }
 
       sendText(req.body.number, req.body.message, function(err) {
-        if (err)
+        if (err) {
+          mpq.track('sendText failed');
           res.send({success:false,message:'Communication with SMS gateway failed.'});
-        else
+        }
+        else {
+          mpq.track('sendText success');
           res.send({success:true});
+        }
       });
     });
 
@@ -123,16 +136,14 @@ function sendText(phone, message, cb) {
 
   _.each(providers, function(provider) {
     var email = provider.replace('%s', phone);
-    console.log('email', email);
     var child = spawn('sendmail', ['-f', 'txt@textbelt.com', email]);
     child.stdout.on('data', console.log);
     child.stderr.on('data', console.log);
-    child.on('error', function() {
-      console.log('failed', email);
+    child.on('error', function(data) {
+      mpq.track('sendmail failed', {email: email, data: data});
       done();
     });
     child.on('exit', function(code, signal) {
-      console.log('done', email);
       done();
     });
     child.stdin.write(message + '\n.');
