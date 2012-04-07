@@ -44,7 +44,6 @@ app.get('/', function(req, res) {
 });
 
 app.post('/text', function(req, res) {
-  var keystr = req.connection.remoteAddress + '_' + dateStr();
 
   var number = stripPhone(req.body.number);
   if (number.length < 9 || number.length > 10) {
@@ -52,14 +51,17 @@ app.post('/text', function(req, res) {
     return;
   }
 
-  redis.incr('phone:' + number, function(err, num) {
+  var ipkey = 'textbelt:ip:' + req.connection.remoteAddress + '_' + dateStr();
+  var phonekey = 'textbelt:phone:' + number;
+
+  redis.incr(phonekey, function(err, num) {
     if (err) {
       res.send({success:false,message:'Could not validate phone# quota.'});
       return;
     }
 
     setTimeout(function() {
-      redis.decr('phone:' + number, function(err, num) {
+      redis.decr(phonekey, function(err, num) {
         if (err) {
           console.log('*** WARNING failed to decr ' + number);
         }
@@ -71,7 +73,7 @@ app.post('/text', function(req, res) {
     }
 
     // now check against ip quota
-    redis.incr(keystr, function(err, num) {
+    redis.incr(ipkey, function(err, num) {
       if (err) {
         res.send({success:false,message:'Could not validate IP quota.'});
         return;
@@ -119,19 +121,23 @@ function sendText(phone, message, cb) {
   });
 
 
-  for (var i=0; i < providers.length; i++) {
-    var provider = providers[i];
+  _.each(providers, function(provider) {
     var email = provider.replace('%s', phone);
+    console.log('email', email);
     var child = spawn('sendmail', ['-f', 'txt@textbelt.com', email]);
     child.stdout.on('data', console.log);
     child.stderr.on('data', console.log);
-    child.on('error', console.log);
+    child.on('error', function() {
+      console.log('failed', email);
+      done();
+    });
     child.on('exit', function(code, signal) {
+      console.log('done', email);
       done();
     });
     child.stdin.write(message + '\n.');
     child.stdin.end();
-  }
+  });
 
 
   /*

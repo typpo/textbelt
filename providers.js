@@ -6,8 +6,7 @@ module.exports = {
     '%s@paging.acswireless.com',
     '%s@txt.att.net',
     '%s@myboostmobile.com',
-    '%s@mobile.celloneusa.com',
-    '%s@sms.edgewireless.com',
+    //'%s@sms.edgewireless.com',  // slow
     '%s@messaging.sprintpcs.com',
     '%s@tmomail.net',
     '%s@mymetropcs.com',
