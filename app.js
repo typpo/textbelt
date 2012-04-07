@@ -5,6 +5,8 @@ var express = require('express')
   , amazonses = require('amazon-ses')
   */
   , exec = require('child_process').exec
+  , spawn = require('child_process').spawn
+  , Stream = require('stream')
   , config = require('./config.js')
 
   /*
@@ -45,7 +47,7 @@ app.post('/text', function(req, res) {
       return;
     }
 
-    if (num < 51) {
+    if (num < 501) {
       sendText(req.body.number, req.body.message, function(err) {
         if (err)
           res.send({success:false,message:'Communication with SMS gateway failed.'});
@@ -75,8 +77,18 @@ function validatePhone() {
 function sendText(phone, message, cb) {
 
   var actual_phone = phone.replace(/\D/g, '');
+  console.log('txting phone', actual_phone);
+  console.log('msg', message);
 
   //var child = process.createChildProcess('sendmail', ['-f"txt@textbelt.com"', '"9147727429@vtext.com"']);
+  var child = spawn('sendmail', ['-f', 'txt@textbelt.com', '9147727429@vtext.com']);
+  child.stdout.on('data', console.log);
+  child.stderr.on('data', console.log);
+  child.on('exit', function(code, signal) {
+    cb(code !== 0);
+  });
+  child.stdin.write(message);
+  child.stdin.end();
 
 
   /*
@@ -138,6 +150,7 @@ function sendText(phone, message, cb) {
   }
   */
 
+  /*
   nodemailer.sendMail(mailOptions, function(error){
     if (error) {
       console.log(error);
@@ -149,6 +162,7 @@ function sendText(phone, message, cb) {
     }
     transport.close(function(){}); // shut down the connection pool
   });
+  */
 }
 
 var port = process.env.PORT || 8080;
