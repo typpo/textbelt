@@ -36,6 +36,12 @@ app.get('/', function(req, res) {
 });
 
 app.post('/text', function(req, res) {
+  if (!req.body.number || !req.body.message) {
+    mpq.track('incomplete request');
+    res.send({success:false,message:'Incomplete request.'});
+    return;
+
+  }
   mpq.track('text',
     {number: req.body.number, message: req.body.message, ip: req.connection.remoteAddress});
 
@@ -76,11 +82,13 @@ app.post('/text', function(req, res) {
         res.send({success:false,message:'Could not validate IP quota.'});
         return;
       }
+      /*
       if (num > 75) {
         mpq.track('exceeded ip quota');
         res.send({success:false,message:'Exceeded quota for this IP address.'});
         return;
       }
+      */
 
       sendText(req.body.number, req.body.message, function(err) {
         if (err) {
@@ -107,7 +115,7 @@ function dateStr() {
 }
 
 function stripPhone(phone) {
-  return phone.replace(/\D/g, '');
+  return (phone+'').replace(/\D/g, '');
 }
 
 function validatePhone(phone) {
