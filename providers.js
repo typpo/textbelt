@@ -16,7 +16,7 @@ module.exports = {
     '%s@qwestmp.com',
     '%s@pcs.rogers.com',
     '%s@msg.telus.com',
-    //'%s@email.uscc.net',
+    '%s@email.uscc.net',
     '%s@vtext.com',
     '%s@vmobl.com',
   ],
