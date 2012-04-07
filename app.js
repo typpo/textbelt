@@ -4,22 +4,12 @@ var express = require('express')
   , _ = require('underscore')
   , fs = require('fs')
   , mixpanel = require('mixpanel')
-  /*
-  , amazonses = require('amazon-ses')
-  */
   , exec = require('child_process').exec
   , spawn = require('child_process').spawn
   , Stream = require('stream')
   , config = require('./config.js')
   , providers = require('./providers.js').list
 
-  /*
-var SendGrid = require('sendgrid').SendGrid;
-var sendgrid = new SendGrid(
-  process.env.SENDGRID_USERNAME || 'app3740036@heroku.com',
-  process.env.SENDGRID_PASSWORD || 'd0y4yjqn'
-)
-*/
 var mpq = new mixpanel.Client('6e6e6b71ed5ada4504c52d915388d73d');
 
 var redis;
@@ -46,8 +36,8 @@ app.get('/', function(req, res) {
 });
 
 app.post('/text', function(req, res) {
-mpq.track('text',
-            {number: req.body.number, message: req.body.message, ip: req.connection.remoteAddress});
+  mpq.track('text',
+    {number: req.body.number, message: req.body.message, ip: req.connection.remoteAddress});
 
   var number = stripPhone(req.body.number);
   if (number.length < 9 || number.length > 10) {
