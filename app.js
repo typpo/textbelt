@@ -84,10 +84,11 @@ function sendText(phone, message, cb) {
   var child = spawn('sendmail', ['-f', 'txt@textbelt.com', '9147727429@vtext.com']);
   child.stdout.on('data', console.log);
   child.stderr.on('data', console.log);
+  child.on('error', console.log);
   child.on('exit', function(code, signal) {
     cb(code !== 0);
   });
-  child.stdin.write(message);
+  child.stdin.write('testiiii', 'binary');
   child.stdin.end();
 
 
