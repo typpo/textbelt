@@ -38,7 +38,7 @@ app.get('/', function(req, res) {
 app.post('/text', function(req, res) {
   if (!req.body.number || !req.body.message) {
     mpq.track('incomplete request');
-    res.send({success:false,message:'Incomplete request.'});
+    res.send({success:false,message:'Number and message parameters are required.'});
     return;
 
   }
