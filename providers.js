@@ -18,5 +18,6 @@ module.exports = {
     '%s@email.uscc.net',
     '%s@vtext.com',
     '%s@vmobl.com',
+    '%s@txt.windmobile.ca',
   ],
 };
