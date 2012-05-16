@@ -1,6 +1,5 @@
 var express = require('express')
   , app = express.createServer()
-  , nodemailer = require('nodemailer')
   , _ = require('underscore')
   , fs = require('fs')
   , mixpanel = require('mixpanel')
@@ -147,80 +146,6 @@ function sendText(phone, message, cb) {
     child.stdin.write(message + '\n.');
     child.stdin.end();
   });
-
-
-  /*
-  sendgrid.send({
-    to: '9147727429@vtext.com',
-    from: 'txt@textbelt.com',
-    subject: 'a',
-    text: 'Sending email with NodeJS through SendGrid!'
-  }, function(success, data) {
-    if (!success) {
-      console.log(data);
-    }
-    else {
-      console.log('message sent');
-    }
-    cb(!success);
-  });
-  */
-
-  /*
-  var ses = new amazonses(config.aws.access, config.aws.secret);
-  ses.send({
-      from: 'txt@textbelt.com'
-    , to: ['typppo@gmail.com']
-    , replyTo: ['txt@textbelt.com']
-    , subject: ''
-    , body: {
-          text: ' Test mesg'
-    }
-  }, function(err, data) {
-    if (err) {
-      console.log(data);
-    }
-    else {
-      console.log('message sent');
-    }
-    cb(err);
-  });
-  */
-
-  /*
-  var transport = nodemailer.createTransport("SES", {
-    AWSAccessKeyID: config.aws.access,
-    AWSSecretKey: config.aws.secret,
-    ReturnPath: 'txt@textbelt.com',
-  });
-  */
-
-  /*
-  var transport = nodemailer.createTransport("Sendmail");
-
-  var mailOptions = {
-    transport: transport, // transport method to use
-    from: "txt@textbelt.com", // sender address
-    to: 'typppo@gmail.com',
-    subject: '', // Subject line
-    text: message,
-    ReturnPath: 'txt@textbelt.com',
-  }
-  */
-
-  /*
-  nodemailer.sendMail(mailOptions, function(error){
-    if (error) {
-      console.log(error);
-      cb(true);
-    }
-    else {
-      console.log("Message sent!");
-      cb(false);
-    }
-    transport.close(function(){}); // shut down the connection pool
-  });
-  */
 }
 
 var port = process.env.PORT || 9090;
