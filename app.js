@@ -6,7 +6,6 @@ var express = require('express')
   , exec = require('child_process').exec
   , spawn = require('child_process').spawn
   , Stream = require('stream')
-  , config = require('./config.js')
   , providers = require('./providers.js').list
 
 var mpq = new mixpanel.Client('6e6e6b71ed5ada4504c52d915388d73d');
