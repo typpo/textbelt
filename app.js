@@ -117,19 +117,13 @@ function stripPhone(phone) {
   return (phone+'').replace(/\D/g, '');
 }
 
-function validatePhone(phone) {
-
-}
-
 function sendText(phone, message, cb) {
   console.log('txting phone', phone);
   console.log('msg', message);
 
-
   var done = _.after(providers.length, function() {
     cb(false);
   });
-
 
   _.each(providers, function(provider) {
     var email = provider.replace('%s', phone);
