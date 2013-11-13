@@ -40,9 +40,7 @@ app.post('/text', function(req, res) {
     return;
 
   }
-  var ip = req.headers['X-Real-IP'] || req.connection.remoteAddress;
-  mpq.track('text',
-    {number: req.body.number, message: req.body.message, ip: ip});
+  var ip = req.header('X-Real-IP');// || req.connection.remoteAddress;
 
   var number = stripPhone(req.body.number);
   if (number.length < 9 || number.length > 10) {
@@ -70,7 +68,7 @@ app.post('/text', function(req, res) {
     }, 1000*60*3);
     if (num > 3) {
       mpq.track('exceeded phone quota');
-      res.send({success:false,message:'Exceeded quota for this phone number.'});
+      res.send({success:false,message:'Exceeded quota for this phone number. ' + number});
       return;
     }
 
@@ -81,21 +79,27 @@ app.post('/text', function(req, res) {
         res.send({success:false,message:'Could not validate IP quota.'});
         return;
       }
-      /*
       if (num > 75) {
         mpq.track('exceeded ip quota');
-        res.send({success:false,message:'Exceeded quota for this IP address.'});
+        res.send({success:false,message:'Exceeded quota for this IP address. ' + ip});
         return;
       }
-      */
+      setTimeout(function() {
+        redis.decr(ipkey, function(err, num) {
+          if (err) {
+            mpq.track('failed to decr ip key', {ipkey: ipkey});
+            console.log('*** WARNING failed to decr ' + ipkey);
+          }
+        });
+      }, 1000*60*60*24);
 
       sendText(req.body.number, req.body.message, function(err) {
         if (err) {
-          mpq.track('sendText failed');
+          mpq.track('sendText failed', {number: req.body.number, message: req.body.message, ip: ip});
           res.send({success:false,message:'Communication with SMS gateway failed.'});
         }
         else {
-          mpq.track('sendText success');
+          mpq.track('sendText success', {number: req.body.number, message: req.body.message, ip: ip});
           res.send({success:true});
         }
       });
