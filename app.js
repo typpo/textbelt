@@ -40,8 +40,9 @@ app.post('/text', function(req, res) {
     return;
 
   }
+  var ip = req.headers['X-Real-IP'] || req.connection.remoteAddress;
   mpq.track('text',
-    {number: req.body.number, message: req.body.message, ip: req.connection.remoteAddress});
+    {number: req.body.number, message: req.body.message, ip: ip});
 
   var number = stripPhone(req.body.number);
   if (number.length < 9 || number.length > 10) {
@@ -49,7 +50,7 @@ app.post('/text', function(req, res) {
     return;
   }
 
-  var ipkey = 'textbelt:ip:' + req.connection.remoteAddress + '_' + dateStr();
+  var ipkey = 'textbelt:ip:' + ip + '_' + dateStr();
   var phonekey = 'textbelt:phone:' + number;
 
   redis.incr(phonekey, function(err, num) {
