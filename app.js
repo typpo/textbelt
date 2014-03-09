@@ -38,7 +38,6 @@ app.post('/text', function(req, res) {
     mpq.track('incomplete request');
     res.send({success:false,message:'Number and message parameters are required.'});
     return;
-
   }
   var ip = req.header('X-Real-IP');// || req.connection.remoteAddress;
 
@@ -46,6 +45,11 @@ app.post('/text', function(req, res) {
   if (number.length < 9 || number.length > 10) {
     res.send({success:false,message:'Invalid phone number.'});
     return;
+  }
+
+  var message = req.body.message;
+  if (message.indexOf('http') === 0) {
+    message = ' ' + message;
   }
 
   var ipkey = 'textbelt:ip:' + ip + '_' + dateStr();
@@ -93,7 +97,7 @@ app.post('/text', function(req, res) {
         });
       }, 1000*60*60*24);
 
-      sendText(req.body.number, req.body.message, function(err) {
+      sendText(req.body.number, message, function(err) {
         if (err) {
           mpq.track('sendText failed', {number: req.body.number, message: req.body.message, ip: ip});
           res.send({success:false,message:'Communication with SMS gateway failed.'});
