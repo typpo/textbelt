@@ -28,7 +28,7 @@ Sample failure:
 
  *  Some carriers may deliver text messages from "txt@textbelt.com"
 
- *  We support the following U.S. providers: Alltel, Ameritech, AT&T Wireless, Boost, CellularOne, Cingular, Edge Wireless, Sprint PCS, Telus Mobility, T-Mobile, Metro PCS, Nextel, O2, Orange, Qwest, Rogers Wireless, US Cellular, Verizon, Virgin Mobile.
+ *  The recipient number must belong to one of the following U.S. providers: Alltel, Ameritech, AT&T Wireless, Boost, CellularOne, Cingular, Edge Wireless, Sprint PCS, Telus Mobility, T-Mobile, Metro PCS, Nextel, O2, Orange, Qwest, Rogers Wireless, US Cellular, Verizon, Virgin Mobile.
 
 ### License (MIT)
 
