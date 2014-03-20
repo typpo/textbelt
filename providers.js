@@ -4,7 +4,7 @@ module.exports = {
   us: [
     '%s@email.uscc.net',
     '%s@message.alltel.com',
-    '%s@messaging.nextel.com',
+    //'%s@messaging.nextel.com',
     '%s@messaging.sprintpcs.com',
     '%s@mobile.celloneusa.com',
     '%s@msg.telus.com',
@@ -41,7 +41,7 @@ module.exports = {
     '%s@ivctext.com',
     '%s@message.alltel.com',
     '%s@messaging.centurytel.net',
-    '%s@messaging.nextel.com',
+    //'%s@messaging.nextel.com',
     '%s@messaging.sprintpcs.com',
     '%s@mobile.celloneusa.com',
     '%s@mobile.dobson.net',
