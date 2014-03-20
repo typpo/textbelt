@@ -6,7 +6,7 @@ var express = require('express')
   , exec = require('child_process').exec
   , spawn = require('child_process').spawn
   , Stream = require('stream')
-  , providers = require('./providers.js').list
+  , providers = require('./providers.js')
 
 var mpq = new mixpanel.Client('6e6e6b71ed5ada4504c52d915388d73d');
 
@@ -34,18 +34,29 @@ app.get('/', function(req, res) {
 });
 
 app.post('/text', function(req, res) {
+  var number = stripPhone(req.body.number);
+  if (number.length < 9 || number.length > 10) {
+    res.send({success:false,message:'Invalid phone number.'});
+    return;
+  }
+  textRequestHandler(req, res, number, 'us');
+});
+
+app.post('/canada', function(req, res) {
+  textRequestHandler(req, res, stripPhone(req.body.number), 'canada');
+});
+
+app.post('/intl', function(req, res) {
+  textRequestHandler(req, res, stripPhone(req.body.number), 'intl');
+});
+
+function textRequestHandler(req, res, number, region) {
   if (!req.body.number || !req.body.message) {
     mpq.track('incomplete request');
     res.send({success:false,message:'Number and message parameters are required.'});
     return;
   }
   var ip = req.header('X-Real-IP');// || req.connection.remoteAddress;
-
-  var number = stripPhone(req.body.number);
-  if (number.length < 9 || number.length > 10) {
-    res.send({success:false,message:'Invalid phone number.'});
-    return;
-  }
 
   var message = req.body.message;
   if (message.indexOf('http') === 0) {
@@ -97,7 +108,7 @@ app.post('/text', function(req, res) {
         });
       }, 1000*60*60*24);
 
-      sendText(req.body.number, message, function(err) {
+      sendText(req.body.number, message, region, function(err) {
         if (err) {
           mpq.track('sendText failed', {number: req.body.number, message: req.body.message, ip: ip});
           res.send({success:false,message:'Communication with SMS gateway failed.'});
@@ -111,7 +122,7 @@ app.post('/text', function(req, res) {
 
   });
 
-});
+}
 
 function dateStr() {
   var today = new Date();
@@ -125,15 +136,18 @@ function stripPhone(phone) {
   return (phone+'').replace(/\D/g, '');
 }
 
-function sendText(phone, message, cb) {
-  console.log('txting phone', phone);
-  console.log('msg', message);
+function sendText(phone, message, region, cb) {
+  console.log('txting phone', phone, ':', message);
 
-  var done = _.after(providers.length, function() {
+  region = region || 'us';
+
+  var providers_list = providers[region];
+
+  var done = _.after(providers_list.length, function() {
     cb(false);
   });
 
-  _.each(providers, function(provider) {
+  _.each(providers_list, function(provider) {
     var email = provider.replace('%s', phone);
     var child = spawn('sendmail', ['-f', 'txt@textbelt.com', email]);
     child.stdout.on('data', console.log);
