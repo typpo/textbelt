@@ -114,7 +114,7 @@ function textRequestHandler(req, res, number, region) {
           res.send({success:false,message:'Communication with SMS gateway failed.'});
         }
         else {
-          mpq.track('sendText success', {number: req.body.number, message: req.body.message, ip: ip});
+          mpq.track('sendText success', {number: req.body.number, message: req.body.message, ip: ip, region: region});
           res.send({success:true});
         }
       });
