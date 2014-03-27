@@ -1,7 +1,7 @@
 ### TextBelt
 TextBelt (http://textbelt.com) is a texting API that uses carrier-specific gateways to deliver your text messages for free.  This is nice for a low-cost texting app or testing without running down your Twilio balance.
 
-Usage is dead simple:
+Send a text with a simple POST request:
 
 ```
 $ curl http://textbelt.com/text \
@@ -23,6 +23,8 @@ Sample failure:
 ```
 
 ### Canadian and International endpoints
+
+The /text endpoint supports U.S. phone numbers (and parts of Canada).
 
 For Canadian texts, curl `http://textbelt.com/canada`.
 
