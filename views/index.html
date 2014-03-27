@@ -41,7 +41,7 @@
 
 <p>TextBelt is an outgoing SMS API that uses carrier-specific gateways to deliver your text messages for free, and without ads.  Textbelt is fairly reliable and has sent over 100,000 texts.</p>
 
-<p>Usage is a simple POST request:</p>
+<p>Send a text with a simple POST request:</p>
 
 <pre><code>$ curl <a href="http://textbelt.com/text">http://textbelt.com/text</a> \
    -d number=5551234567 \
@@ -63,6 +63,10 @@
 </code></pre>
 
 <h3>Canadian and International endpoints</h3>
+
+<p>
+The /text endpoint supports U.S. phone numbers (and parts of Canada).
+</p>
 
 <p>
 For Canadian texts, curl <pre><code>http://textbelt.com/canada</pre></code>
