@@ -57,6 +57,7 @@ function textRequestHandler(req, res, number, region) {
     return;
   }
   var ip = req.header('X-Real-IP');// || req.connection.remoteAddress;
+  mpq.track('textRequestHandler entry', {number: req.body.number, message: req.body.message, ip: ip, region: region});
 
   var message = req.body.message;
   if (message.indexOf('http') === 0) {
