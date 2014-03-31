@@ -1,7 +1,7 @@
 {
     "name": "TextBelt"
   , "dependencies": {
-      "express": "2.5.2"
+      "express": "latest"
       , "jade": "0.14.2"
       , "nodemailer": "latest"
       , "redis-url": "latest"
