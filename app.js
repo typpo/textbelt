@@ -1,5 +1,5 @@
 var express = require('express')
-  , app = express.createServer()
+  , app = express()
   , _ = require('underscore')
   , fs = require('fs')
   , mixpanel = require('mixpanel')
@@ -10,11 +10,7 @@ var express = require('express')
 
 var mpq = new mixpanel.Client('6e6e6b71ed5ada4504c52d915388d73d');
 
-var redis;
-if (process.env.NODE_ENV == 'production')
-  redis = require('redis-url').connect(process.env.REDISTOGO_URL);
-else
-  redis = require('redis-url').connect();
+var redis = require('redis-url').connect();
 
 // Express config
 app.set('views', __dirname + '/views');
