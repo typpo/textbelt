@@ -29,6 +29,10 @@ app.get('/', function(req, res) {
   });
 });
 
+app.get('/providers/us', function(req, res) {
+  res.send(providers.us);
+});
+
 app.post('/text', function(req, res) {
   var number = stripPhone(req.body.number);
   if (number.length < 9 || number.length > 10) {
