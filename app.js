@@ -80,16 +80,22 @@ function textRequestHandler(req, res, number, region, key) {
     ip: ip
   };
 
-  var doSendText = function() {
+  var doSendText = function(response_obj) {
+    response_obj = response_obj || {};
+
     // Time to actually send the message
     sendText(req.body.number, message, region, function(err) {
       if (err) {
         mpq.track('sendText failed', tracking_details);
-        res.send({success:false, message:'Communication with SMS gateway failed.'});
+        res.send(_.extend(response_obj,
+                          {
+                            success:false,
+                            message:'Communication with SMS gateway failed.'
+                          }));
       }
       else {
         mpq.track('sendText success', tracking_details);
-        res.send({success:true});
+        res.send(_.extend(response_obj, {success:true}));
       }
     });
   };
@@ -101,7 +107,7 @@ function textRequestHandler(req, res, number, region, key) {
     mpq.track('sendText skipping verification', _.extend(tracking_details, {
       key: key,
     }));
-    doSendText();
+    doSendText({used_key: key});
     return;
   }
 
