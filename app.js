@@ -22,15 +22,15 @@ app.use(express.bodyParser());
 
 // App
 
-/* Homepage */
 app.get('/', function(req, res) {
   fs.readFile(__dirname + '/views/index.html', 'utf8', function(err, text){
     res.send(text);
   });
 });
 
-app.get('/providers/us', function(req, res) {
-  res.send(providers.us);
+app.get('/providers/:region', function(req, res) {
+  // Utility function, just to check the providers currently loaded
+  res.send(providers[req.params.region]);
 });
 
 app.post('/text', function(req, res) {
