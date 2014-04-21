@@ -8,6 +8,14 @@ var express = require('express')
   , Stream = require('stream')
   , providers = require('./providers.js')
 
+var access_keys;
+try {
+  access_keys = require('./keys.json');
+} catch (e) {
+  access_keys = {};
+}
+console.log('Loaded access keys:', access_keys);
+
 var mpq = new mixpanel.Client('6e6e6b71ed5ada4504c52d915388d73d');
 
 var redis = require('redis-url').connect();
@@ -39,18 +47,18 @@ app.post('/text', function(req, res) {
     res.send({success:false,message:'Invalid phone number.'});
     return;
   }
-  textRequestHandler(req, res, number, 'us');
+  textRequestHandler(req, res, number, 'us', req.query.key);
 });
 
 app.post('/canada', function(req, res) {
-  textRequestHandler(req, res, stripPhone(req.body.number), 'canada');
+  textRequestHandler(req, res, stripPhone(req.body.number), 'canada', req.query.key);
 });
 
 app.post('/intl', function(req, res) {
-  textRequestHandler(req, res, stripPhone(req.body.number), 'intl');
+  textRequestHandler(req, res, stripPhone(req.body.number), 'intl', req.query.key);
 });
 
-function textRequestHandler(req, res, number, region) {
+function textRequestHandler(req, res, number, region, key) {
   if (!req.body.number || !req.body.message) {
     mpq.track('incomplete request');
     res.send({success:false,message:'Number and message parameters are required.'});
@@ -61,16 +69,50 @@ function textRequestHandler(req, res, number, region) {
 
   var message = req.body.message;
   if (message.indexOf('http') === 0) {
+    // Handle problem with vtext where message would not get sent properly if it
+    // begins with h ttp
     message = ' ' + message;
   }
 
+  var tracking_details = {
+    number: req.body.number,
+    message: req.body.message,
+    ip: ip
+  };
+
+  var doSendText = function() {
+    // Time to actually send the message
+    sendText(req.body.number, message, region, function(err) {
+      if (err) {
+        mpq.track('sendText failed', tracking_details);
+        res.send({success:false, message:'Communication with SMS gateway failed.'});
+      }
+      else {
+        mpq.track('sendText success', tracking_details);
+        res.send({success:true});
+      }
+    });
+  };
+
+  // Do they have a valid access key?
+  if (key && key in access_keys) {
+    console.log('Got valid key', key, '... not applying limits.');
+    // Skip verification
+    mpq.track('sendText skipping verification', _.extend(tracking_details, {
+      key: key,
+    }));
+    doSendText();
+    return;
+  }
+
+  // If they don't have a special key, apply rate limiting and verification
   var ipkey = 'textbelt:ip:' + ip + '_' + dateStr();
   var phonekey = 'textbelt:phone:' + number;
 
   redis.incr(phonekey, function(err, num) {
     if (err) {
       mpq.track('redis fail');
-      res.send({success:false,message:'Could not validate phone# quota.'});
+      res.send({success:false, message:'Could not validate phone# quota.'});
       return;
     }
 
@@ -84,7 +126,7 @@ function textRequestHandler(req, res, number, region) {
     }, 1000*60*3);
     if (num > 3) {
       mpq.track('exceeded phone quota');
-      res.send({success:false,message:'Exceeded quota for this phone number. ' + number});
+      res.send({success:false, message:'Exceeded quota for this phone number. ' + number});
       return;
     }
 
@@ -92,12 +134,12 @@ function textRequestHandler(req, res, number, region) {
     redis.incr(ipkey, function(err, num) {
       if (err) {
         mpq.track('redis fail');
-        res.send({success:false,message:'Could not validate IP quota.'});
+        res.send({success:false, message:'Could not validate IP quota.'});
         return;
       }
       if (num > 75) {
         mpq.track('exceeded ip quota');
-        res.send({success:false,message:'Exceeded quota for this IP address. ' + ip});
+        res.send({success:false, message:'Exceeded quota for this IP address. ' + ip});
         return;
       }
       setTimeout(function() {
@@ -109,21 +151,11 @@ function textRequestHandler(req, res, number, region) {
         });
       }, 1000*60*60*24);
 
-      sendText(req.body.number, message, region, function(err) {
-        if (err) {
-          mpq.track('sendText failed', {number: req.body.number, message: req.body.message, ip: ip});
-          res.send({success:false,message:'Communication with SMS gateway failed.'});
-        }
-        else {
-          mpq.track('sendText success', {number: req.body.number, message: req.body.message, ip: ip, region: region});
-          res.send({success:true});
-        }
-      });
-    });
-
-  });
-
-}
+      // Cleared to send now
+      doSendText();
+    });     // end redis ipkey incr
+  });       // end redis phonekey incr
+}           // end textRequestHandler
 
 function dateStr() {
   var today = new Date();
