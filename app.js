@@ -10,6 +10,9 @@ var express = require('express')
 
 var access_keys;
 try {
+  // Optionally, you may specify special access keys in a keys.json file.
+  // These access keys are not rate-limited.
+  // See example_keys.json for format.
   access_keys = require('./keys.json');
 } catch (e) {
   access_keys = {};
