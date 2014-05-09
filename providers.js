@@ -91,6 +91,7 @@ module.exports = {
     '%s@celforce.com',
     '%s@correo.movistar.net',
     '%s@delhi.hutch.co.in',
+    '%s@digitextjm.com',
     '%s@e-page.net',
     '%s@escotelmobile.com',
     '%s@freesurf.ch',
