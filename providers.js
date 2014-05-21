@@ -50,7 +50,7 @@ module.exports = {
     '%s@msg.telus.com',
     '%s@my2way.com',
     '%s@myboostmobile.com',
-    '%s@mymetropcs.com',
+    //'%s@mymetropcs.com',
     '%s@onlinebeep.net',
     '%s@page.metrocall.com',
     '%s@pagemci.com',
