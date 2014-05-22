@@ -13,7 +13,6 @@ module.exports = {
     '%s@tmomail.net',
     '%s@txt.att.net',
     '%s@txt.windmobile.ca',
-    '%s@vmobl.com',
     '%s@vtext.com',
 
     //'%s@sms.edgewireless.com',  // slow
