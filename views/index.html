@@ -1,49 +1,38 @@
-<!doctype html>
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>TextBelt - Free Texting API - No Ads</title>
-    <link rel="stylesheet" href="http://typpo.github.com/textbelt/stylesheets/styles.css">
-    <link rel="stylesheet" href="http://typpo.github.com/textbelt/stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="http://typpo.github.com/textbelt/javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <style>
-    .mute {
-      color: #aaa;
-      font-size: 10px;
-    }
-    </style>
-  </head>
-  <body>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+ <meta name="description" content="Ian Webster's personal site.">
+<title>TextBelt - Free Texting API - No Ads</title>
+<link href="http://ianww.com/bootstrap.min.css" rel="stylesheet" />
+<link href="http://ianww.com/main.css" rel="stylesheet" />
+<style>
+.mute {
+  color: #909090;
+  font-size: 10px;
+}
+</style>
+</head>
+<body>
+<div>
+<div class="content drop-shadow lifted">
+<div class="name_container">
+<h1>TextBelt</h1>
+<p style="margin-left:2px">A free, open source API for outgoing texts.</p>
+<p style="color:#909090">Maintained by <a href="#">Ian Webster</a>.  Open source on <a href="#">github</a>.</p>
+<div class="wrapper" style="float:right; margin-top:-33px">
+    <div id="title">
+      <p>
+      <span class='st_facebook'></span>
+      <span class='st_twitter'></span>
+      <span class='st_email'></span>
+      </p>
+      </span>
+    </div>
+</div>
+</div>
 
-    <div class="wrapper">
-
-      <section>
-        <div id="title">
-          <h1>TextBelt</h1>
-          <p>Free API for outgoing texts.
-
-          </p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="http://www.ianww.com/">Ian Webster</a>. Source on <a href="http://github.com/typpo/textbelt">github</a>.</span>
-          <span class="credits right" style="margin-top:-20px">
-          <p>
-          <span class='st_facebook'></span>
-          <span class='st_twitter'></span>
-          <span class='st_email'></span>
-          </p>
-          </span>
-        </div>
-
-<p>TextBelt is an outgoing SMS API that uses carrier-specific gateways to deliver your text messages for free, and without ads.  Textbelt is fairly reliable and has sent over 100,000 texts.</p>
+<p>TextBelt is an outgoing SMS API that uses carrier-specific gateways to deliver your text messages for free, and without ads.  The service is fairly reliable and has sent over 100,000 texts.</p>
 
 <p>Send a text with a simple POST request:</p>
 
@@ -52,7 +41,7 @@
    -d "message=I sent this message for free with textbelt.com"
 </code></pre>
 
-<p> <i>number</i> and <i>message</i> parameters are required.</p>
+<p> <code>number</code> and <code>message</code> parameters are required.</p>
 
 <h3>Success and Failure</h3>
 
@@ -97,7 +86,7 @@ Canadian and international support may not be complete.  Please refer to the lis
 <h3>About</h3>
 
 <p>
-This project is maintained by <a href="http://www.ianww.com/">Ian Webster</a>.
+This project is maintained by <a href="http://www.ianww.com/">Ian Webster</a> and available on <a href="http://github.com/typpo/textbelt">Github</a>.
 <div>
 <a href="https://mixpanel.com/f/partner"><img src="https://mixpanel.com/site_media/images/partner/badge_blue.png" alt="Mobile and Web Analytics" /></a>
 </div>
@@ -105,6 +94,8 @@ This project is maintained by <a href="http://www.ianww.com/">Ian Webster</a>.
       </section>
 
     </div>
+
+</div></div>
     <!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
       for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
       mixpanel.init("6e6e6b71ed5ada4504c52d915388d73d");</script><!-- end Mixpanel -->

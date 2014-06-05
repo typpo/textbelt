@@ -1,5 +1,5 @@
 ### TextBelt
-TextBelt (http://textbelt.com) is a texting API that uses carrier-specific gateways to deliver your text messages for free.  This is nice for a low-cost texting app or testing without running down your Twilio balance.  Over 100k texts have been sent via Textbelt.
+TextBelt (http://textbelt.com) is an outgoing SMS API that uses carrier-specific gateways to deliver your text messages for free, and without ads.  The service is fairly reliable and has sent over 100,000 texts.
 
 Send a text with a simple POST request:
 
@@ -8,6 +8,8 @@ $ curl http://textbelt.com/text \
    -d number=5551234567 \
    -d "message=I sent this message for free with textbelt.com"
 ```
+
+`number` and `message` parameters are required.
 
 ### Success and Failure
 Sample success:
