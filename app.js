@@ -31,8 +31,7 @@ app.use(express.cookieParser());
 app.use(express.static(__dirname + '/public'));
 app.use(express.bodyParser());
 
-// App
-
+// App routes
 app.get('/', function(req, res) {
   fs.readFile(__dirname + '/views/index.html', 'utf8', function(err, text){
     res.send(text);
@@ -61,6 +60,8 @@ app.post('/intl', function(req, res) {
   textRequestHandler(req, res, stripPhone(req.body.number), 'intl', req.query.key);
 });
 
+// App helper functions
+
 function textRequestHandler(req, res, number, region, key) {
   if (!req.body.number || !req.body.message) {
     mpq.track('incomplete request');
@@ -71,9 +72,9 @@ function textRequestHandler(req, res, number, region, key) {
   mpq.track('textRequestHandler entry', {number: req.body.number, message: req.body.message, ip: ip, region: region});
 
   var message = req.body.message;
-  if (message.indexOf('http') === 0) {
+  if (message.indexOf(':') > -1) {
     // Handle problem with vtext where message would not get sent properly if it
-    // begins with h ttp
+    // contains a colon
     message = ' ' + message;
   }
 
@@ -206,6 +207,7 @@ function sendText(phone, message, region, cb) {
   });
 }
 
+// Start server
 var port = process.env.PORT || 9090;
 app.listen(port, function() {
   console.log('Listening on', port);
