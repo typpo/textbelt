@@ -46,7 +46,7 @@ app.get('/providers/:region', function(req, res) {
 app.post('/text', function(req, res) {
   var number = stripPhone(req.body.number);
   if (number.length < 9 || number.length > 10) {
-    res.send({success:false,message:'Invalid phone number.'});
+    res.send({success:false, message:'Invalid phone number.'});
     return;
   }
   textRequestHandler(req, res, number, 'us', req.query.key);
@@ -65,10 +65,10 @@ app.post('/intl', function(req, res) {
 function textRequestHandler(req, res, number, region, key) {
   if (!req.body.number || !req.body.message) {
     mpq.track('incomplete request');
-    res.send({success:false,message:'Number and message parameters are required.'});
+    res.send({success:false, message:'Number and message parameters are required.'});
     return;
   }
-  var ip = req.header('X-Real-IP');// || req.connection.remoteAddress;
+  var ip = req.header('X-Real-IP') || req.connection.remoteAddress;
 
   var message = req.body.message;
   if (message.indexOf(':') > -1) {
