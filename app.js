@@ -63,7 +63,7 @@ app.post('/intl', function(req, res) {
 });
 
 function textRequestHandler(req, res, number, region, key) {
-  if (!req.body.number || !req.body.message) {
+  if (!number || !req.body.message) {
     mpq.track('incomplete request');
     res.send({success:false,message:'Number and message parameters are required.'});
     return;
@@ -78,7 +78,7 @@ function textRequestHandler(req, res, number, region, key) {
   }
 
   var tracking_details = {
-    number: req.body.number,
+    number: number,
     message: req.body.message,
     ip: ip
   };
@@ -87,7 +87,7 @@ function textRequestHandler(req, res, number, region, key) {
     response_obj = response_obj || {};
 
     // Time to actually send the message
-    sendText(req.body.number, message, region, function(err) {
+    sendText(number, message, region, function(err) {
       if (err) {
         mpq.track('sendText failed', tracking_details);
         res.send(_.extend(response_obj,
