@@ -1,5 +1,9 @@
 {
     "name": "TextBelt"
+  , "repository": {
+        "type": "git"
+      , "url": "git@github.com:typpo/textbelt.git"
+    }
   , "dependencies": {
       "express": "~3.5.1"
       , "jade": "~0.14.2"
@@ -12,5 +16,5 @@
     }
   , "main": "app"
   , "engines": { "node": ">= 0.4.0" }
-  , "version": "0.0.1"
+  , "version": "0.0.2"
 }
