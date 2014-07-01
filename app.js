@@ -7,6 +7,7 @@ var express = require('express')
   , spawn = require('child_process').spawn
   , Stream = require('stream')
   , providers = require('./providers.js')
+  , banned_numbers = require('./banned_numbers.js')
   , mixpanel_config = require('./mixpanel_config.js')
 
 var access_keys;
@@ -66,6 +67,11 @@ function textRequestHandler(req, res, number, region, key) {
   if (!number || !req.body.message) {
     mpq.track('incomplete request');
     res.send({success:false,message:'Number and message parameters are required.'});
+    return;
+  }
+  if (banned_numbers.BLACKLIST[number]) {
+    mpq.track('banned number');
+    res.send({success:false,message:'Sorry, texts to this number are disabled.'});
     return;
   }
   var ip = req.header('X-Real-IP');// || req.connection.remoteAddress;

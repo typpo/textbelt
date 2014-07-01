@@ -1,3 +1,7 @@
+banned_numbers.js
+mixpanel_config.js
+keys.json
+
 *.swp
 *.swo
 *~
