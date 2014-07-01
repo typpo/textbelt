@@ -43,8 +43,7 @@ app.use(express.cookieParser());
 app.use(express.static(__dirname + '/public'));
 app.use(express.bodyParser());
 
-// App
-
+// App routes
 app.get('/', function(req, res) {
   fs.readFile(__dirname + '/views/index.html', 'utf8', function(err, text){
     res.send(text);
@@ -59,7 +58,7 @@ app.get('/providers/:region', function(req, res) {
 app.post('/text', function(req, res) {
   var number = stripPhone(req.body.number);
   if (number.length < 9 || number.length > 10) {
-    res.send({success:false,message:'Invalid phone number.'});
+    res.send({success:false, message:'Invalid phone number.'});
     return;
   }
   textRequestHandler(req, res, number, 'us', req.query.key);
@@ -73,10 +72,12 @@ app.post('/intl', function(req, res) {
   textRequestHandler(req, res, stripPhone(req.body.number), 'intl', req.query.key);
 });
 
+// App helper functions
+
 function textRequestHandler(req, res, number, region, key) {
   if (!number || !req.body.message) {
     mpq.track('incomplete request');
-    res.send({success:false,message:'Number and message parameters are required.'});
+    res.send({success:false, message:'Number and message parameters are required.'});
     return;
   }
   if (banned_numbers.BLACKLIST[number]) {
@@ -84,12 +85,12 @@ function textRequestHandler(req, res, number, region, key) {
     res.send({success:false,message:'Sorry, texts to this number are disabled.'});
     return;
   }
-  var ip = req.header('X-Real-IP');// || req.connection.remoteAddress;
+  var ip = req.header('X-Real-IP') || req.connection.remoteAddress;
 
   var message = req.body.message;
-  if (message.indexOf('http') === 0) {
+  if (message.indexOf(':') > -1) {
     // Handle problem with vtext where message would not get sent properly if it
-    // begins with h ttp
+    // contains a colon
     message = ' ' + message;
   }
 
@@ -222,6 +223,7 @@ function sendText(phone, message, region, cb) {
   });
 }
 
+// Start server
 var port = process.env.PORT || 9090;
 app.listen(port, function() {
   console.log('Listening on', port);
