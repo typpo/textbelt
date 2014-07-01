@@ -1,14 +1,12 @@
 {
     "name": "TextBelt"
   , "dependencies": {
-      "express": "latest"
-      , "jade": "0.14.2"
-      , "nodemailer": "latest"
-      , "redis-url": "latest"
-      , "amazon-ses": "latest"
-      , "sendgrid": "latest"
-      , "underscore": "latest"
-      , "mixpanel": "latest"
+      "express": "~3.5.1"
+      , "jade": "~0.14.2"
+      , "nodemailer": "~0.6.1"
+      , "redis-url": "~0.2.0"
+      , "underscore": "~1.6.0"
+      , "mixpanel": "~0.0.19"
     }
   , "devDependencies": {
     }
