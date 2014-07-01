@@ -7,8 +7,23 @@ var express = require('express')
   , spawn = require('child_process').spawn
   , Stream = require('stream')
   , providers = require('./providers.js')
-  , banned_numbers = require('./banned_numbers.js')
-  , mixpanel_config = require('./mixpanel_config.js')
+  , redis = require('redis-url').connect()
+
+// Optional modules
+var banned_numbers;
+try {
+  banned_numbers = require('./banned_numbers.js')
+} catch(e) {
+  banned_numbers = {BLACKLIST: {}};
+}
+
+var mpq;
+try {
+  mixpanel_config = require('./mixpanel_config.js')
+  mpq = new mixpanel.Client(mixpanel_config.api_key);
+} catch(e) {
+  mpq = {track: function() {}};
+}
 
 var access_keys;
 try {
@@ -19,11 +34,6 @@ try {
 } catch (e) {
   access_keys = {};
 }
-console.log('Loaded access keys:', access_keys);
-
-var mpq = new mixpanel.Client(mixpanel_config.api_key);
-
-var redis = require('redis-url').connect();
 
 // Express config
 app.set('views', __dirname + '/views');
