@@ -7,6 +7,7 @@ var express = require('express')
   , spawn = require('child_process').spawn
   , Stream = require('stream')
   , providers = require('./providers.js')
+  , mixpanel_config = require('./mixpanel_config.js')
 
 var access_keys;
 try {
@@ -19,7 +20,7 @@ try {
 }
 console.log('Loaded access keys:', access_keys);
 
-var mpq = new mixpanel.Client('6e6e6b71ed5ada4504c52d915388d73d');
+var mpq = new mixpanel.Client(mixpanel_config.api_key);
 
 var redis = require('redis-url').connect();
 
