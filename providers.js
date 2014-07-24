@@ -65,6 +65,7 @@ module.exports = {
     '%s@tms.suncom.com',
     '%s@txt.att.net',
     '%s@txt.bell.ca',
+    '%s@txt.windmobile.ca',
     '%s@uswestdatamail.com',
     '%s@utext.com',
     '%s@vmobile.ca',
