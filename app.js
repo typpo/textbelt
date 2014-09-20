@@ -208,7 +208,7 @@ function sendText(phone, message, region, cb) {
 
   _.each(providers_list, function(provider) {
     var email = provider.replace('%s', phone);
-    var child = spawn('sendmail', ['-f', 'txt@textbelt.com', email]);
+    var child = spawn('sendmail', ['-f', 'txt2@textbelt.com', email]);
     child.stdout.on('data', console.log);
     child.stderr.on('data', console.log);
     child.on('error', function(data) {
