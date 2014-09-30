@@ -4,7 +4,7 @@ TextBelt (http://textbelt.com) is an outgoing SMS API that uses carrier-specific
 Send a text with a simple POST request:
 
 ```
-$ curl http://textbelt.com/text \
+$ curl -X POST http://textbelt.com/text \
    -d number=5551234567 \
    -d "message=I sent this message for free with textbelt.com"
 ```
