@@ -6,7 +6,7 @@ var express = require('express')
   , exec = require('child_process').exec
   , spawn = require('child_process').spawn
   , Stream = require('stream')
-  , providers = require('./providers.js')
+  , providers = require('../lib/providers.js')
   , redis = require('redis-url').connect()
 
 // Optional modules
