@@ -12,14 +12,15 @@ var express = require('express')
 // Optional modules
 var banned_numbers;
 try {
-  banned_numbers = require('./banned_numbers.js')
+  banned_numbers = require('./banned_numbers.js');
 } catch(e) {
   banned_numbers = {BLACKLIST: {}};
 }
 
-var mpq;
+var mpq
+  , mixpanel_config;
 try {
-  mixpanel_config = require('./mixpanel_config.js')
+  mixpanel_config = require('./mixpanel_config.js');
   mpq = new mixpanel.Client(mixpanel_config.api_key);
 } catch(e) {
   mpq = {track: function() {}};
