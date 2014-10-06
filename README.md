@@ -23,6 +23,38 @@ Sample failure:
 ```
 {"success":false,"message":"Exceeded quota for this phone number."}
 ```
+### Usage as a module
+
+Though this repository contains an express server so you may run your own
+instance of the web app, you may also use it to send text messages in your
+project. The only requirement is unix/posix `sendmail`, used to forward the message.
+
+For example, to send a text using the default settings:
+```
+var text = require('textbelt');
+
+text.send('9491234567', 'A sample text message!', undefined, function(err) {
+  if (err) {
+    console.log(err);
+  }
+});
+```
+
+You can also supply a region (valid choices are `us`, `intl`, or `canada`)
+```
+var text = require('textbelt');
+
+// Canada
+text.send('9491234567', 'A sample text message!', 'canada', function(err) {
+...
+});
+
+// International
+text.send('1119491234567', 'Bonjour!', 'intl', function(err) {
+...
+});
+
+```
 
 ### Canadian and International endpoints
 
