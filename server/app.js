@@ -6,20 +6,24 @@ var express = require('express')
   , exec = require('child_process').exec
   , spawn = require('child_process').spawn
   , Stream = require('stream')
-  , providers = require('./providers.js')
   , redis = require('redis-url').connect()
+  , text = require('../lib/text');
+
+// Enable log messages when sending texts.
+text.debug(true);
 
 // Optional modules
 var banned_numbers;
 try {
-  banned_numbers = require('./banned_numbers.js')
+  banned_numbers = require('./banned_numbers.js');
 } catch(e) {
   banned_numbers = {BLACKLIST: {}};
 }
 
-var mpq;
+var mpq
+  , mixpanel_config;
 try {
-  mixpanel_config = require('./mixpanel_config.js')
+  mixpanel_config = require('./mixpanel_config.js');
   mpq = new mixpanel.Client(mixpanel_config.api_key);
 } catch(e) {
   mpq = {track: function() {}};
@@ -104,7 +108,7 @@ function textRequestHandler(req, res, number, region, key) {
     response_obj = response_obj || {};
 
     // Time to actually send the message
-    sendText(number, message, region, function(err) {
+    text.send(number, message, region, function(err) {
       if (err) {
         mpq.track('sendText failed', tracking_details);
         res.send(_.extend(response_obj,
@@ -195,34 +199,6 @@ function stripPhone(phone) {
   return (phone+'').replace(/\D/g, '');
 }
 
-function sendText(phone, message, region, cb) {
-  console.log('txting phone', phone, ':', message);
-
-  region = region || 'us';
-
-  var providers_list = providers[region];
-
-  var done = _.after(providers_list.length, function() {
-    cb(false);
-  });
-
-  _.each(providers_list, function(provider) {
-    var email = provider.replace('%s', phone);
-    email = 'Subject: Text\r\n\r\n' + email;
-    var child = spawn('sendmail', ['-f', 'txt2@textbelt.com', email]);
-    child.stdout.on('data', console.log);
-    child.stderr.on('data', console.log);
-    child.on('error', function(data) {
-      mpq.track('sendmail failed', {email: email, data: data});
-      done();
-    });
-    child.on('exit', function(code, signal) {
-      done();
-    });
-    child.stdin.write(message + '\n.');
-    child.stdin.end();
-  });
-}
 
 // Start server
 var port = process.env.PORT || 9090;
