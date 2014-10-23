@@ -196,9 +196,8 @@ function dateStr() {
 }
 
 function stripPhone(phone) {
-  return (phone+'').replace(/\D/g, '');
+  return (phone + '').replace(/\D/g, '');
 }
-
 
 // Start server
 var port = process.env.PORT || 9090;
