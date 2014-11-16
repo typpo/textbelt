@@ -56,6 +56,12 @@ text.send('1119491234567', 'Bonjour!', 'intl', function(err) {
 
 ```
 
+### Usage as a standalone server
+
+Textbelt can be run as a standalone server with: `node server/app.js`.  Be sure to install dependencies first with `npm install`.
+
+By default, the server listens on port 9090 and is configured to accept traffic from a reverse proxy or load balancer such as nginx.  To enable accurate IP rate limiting, the reverse proxy should be configured to set the `X-Real-IP` header.
+
 ### Canadian and International endpoints
 
 The /text endpoint supports U.S. phone numbers (and parts of Canada).

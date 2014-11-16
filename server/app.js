@@ -89,7 +89,11 @@ function textRequestHandler(req, res, number, region, key) {
     res.send({success:false,message:'Sorry, texts to this number are disabled.'});
     return;
   }
-  var ip = req.header('X-Real-IP') || req.connection.remoteAddress;
+
+  var ip = req.connection.remoteAddress;
+  if (!ip || ip === '127.0.0.1') {
+    ip = req.header('X-Real-IP');
+  }
 
   var message = req.body.message;
   if (message.indexOf(':') > -1) {
