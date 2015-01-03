@@ -107,6 +107,7 @@ function textRequestHandler(req, res, number, region, key) {
     message = ' ' + message;
   }
 
+  var shasum = crypto.createHash('sha1');
   shasum.update(number);
   var authbox_digest = shasum.digest('hex');
   _.extend(authbox_details, {
