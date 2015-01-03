@@ -1,14 +1,22 @@
 var express = require('express')
   , app = express()
-  , authbox = require('authbox')
   , _ = require('underscore')
+  , authbox = require('authbox')
+  , crypto = require('crypto')
+  , exec = require('child_process').exec
   , fs = require('fs')
   , mixpanel = require('mixpanel')
-  , exec = require('child_process').exec
-  , spawn = require('child_process').spawn
-  , Stream = require('stream')
   , redis = require('redis-url').connect()
+  , spawn = require('child_process').spawn
   , text = require('../lib/text');
+
+// Express config
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+
+app.use(express.cookieParser());
+app.use(express.static(__dirname + '/public'));
+app.use(express.bodyParser());
 
 // Enable log messages when sending texts.
 text.debug(true);
@@ -34,6 +42,7 @@ try {
 try {
   authbox_config = require('./authbox_config.js');
   authbox.configure(authbox_config);
+  app.use(authbox.middleware);
 } catch(e) {
   authbox = {log: function() {}};
 }
@@ -47,15 +56,6 @@ try {
 } catch (e) {
   access_keys = {};
 }
-
-// Express config
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
-
-app.use(express.cookieParser());
-app.use(express.static(__dirname + '/public'));
-app.use(authbox.middleware);
-app.use(express.bodyParser());
 
 // App routes
 app.get('/', function(req, res) {
@@ -103,12 +103,14 @@ function textRequestHandler(req, res, number, region, key) {
   var message = req.body.message;
   if (message.indexOf(':') > -1) {
     // Handle problem with vtext where message would not get sent properly if it
-    // contains a colon
+    // contains a colon.
     message = ' ' + message;
   }
 
+  shasum.update(number);
+  var authbox_digest = shasum.digest('hex');
   _.extend(authbox_details, {
-    recipient__phone: number,
+    recipient: number,
     message__text: message
   });
 
