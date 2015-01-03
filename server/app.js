@@ -89,8 +89,14 @@ app.post('/intl', function(req, res) {
 // App helper functions
 
 function textRequestHandler(req, res, number, region, key) {
+  var ip = req.connection.remoteAddress;
+  if (!ip || ip === '127.0.0.1') {
+    ip = req.header('X-Real-IP');
+  }
+
   var authbox_details = {
-    $actionName: 'text'
+    $actionName: 'text',
+    $ipAddress: ip
   };
 
   if (!number || !req.body.message) {
@@ -120,11 +126,6 @@ function textRequestHandler(req, res, number, region, key) {
     authbox.log(req, _.extend(authbox_details, {$failureReason: 'banned_number'}));
     res.send({success:false,message:'Sorry, texts to this number are disabled.'});
     return;
-  }
-
-  var ip = req.connection.remoteAddress;
-  if (!ip || ip === '127.0.0.1') {
-    ip = req.header('X-Real-IP');
   }
 
   var tracking_details = {
