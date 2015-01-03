@@ -111,7 +111,7 @@ function textRequestHandler(req, res, number, region, key) {
   shasum.update(number);
   var authbox_digest = shasum.digest('hex');
   _.extend(authbox_details, {
-    recipient: number,
+    recipient: authbox_digest,
     message__text: message
   });
 
