@@ -18,6 +18,8 @@ Sample success:
 {"success":true}
 ```
 
+Note that success means that the message was sent to Textbelt's list of providers.  We can't guarantee delivery on your network.
+
 Sample failure:
 
 ```
@@ -73,6 +75,8 @@ For international texts, curl `http://textbelt.com/intl`.
 Canadian and international support may not be complete.  Refer to the list of supported carriers.
 
 ### Notes and Limitations
+
+ * Some carriers are picky about which messages they deliver. A "success" response from Textbelt means that your message was given to the carrier.
 
  *  IP addresses are limited to 75 texts per day.  Phone numbers are limited to 3 texts every 3 minutes.  If you need increased limits, please contact admin@textbelt.com.
 
