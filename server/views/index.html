@@ -35,7 +35,13 @@ body {
 </div>
 </div>
 
-<p>TextBelt is an outgoing SMS API that uses carrier-specific gateways to deliver your text messages for free, and without ads.  The service is fairly reliable and has sent over 100,000 texts.</p>
+<p>
+TextBelt is a REST API that sends outgoing SMS. It is available as a public service or as an internally self-hosted server.
+</p>
+
+<p>
+Textbelt uses carrier-specific gateways to deliver your text messages for free, and without ads.  The service is fairly reliable and has sent over 1 million texts.
+</p>
 
 <p>Send a text with a simple POST request:</p>
 
@@ -52,6 +58,8 @@ body {
 
 <pre><code>{"success":true}
 </code></pre>
+
+<p>Note that success means that the message was sent to Textbelt's list of providers.  We can't guarantee delivery on your network.</p>
 
 <p>Sample failure:</p>
 
@@ -79,6 +87,7 @@ Canadian and international support may not be complete.  Please refer to the lis
 <h3>Notes and Limitations</h3>
 
 <ul>
+<li><p>Some carriers are picky about which messages they deliver. A "success" response from Textbelt means that your message was given to the carrier.</p></li>
 <li><p>IP addresses are limited to 75 texts per day.  Phone numbers are limited to 3 texts every 3 minutes.  To report abuse or request increased limits, please contact ianw_textbelt at ianww.com.</p></li>
 <li><p>Some carriers may deliver text messages from "txt@textbelt.com"</p></li>
 <li><p>Supported U.S. carriers: <span class="mute">Alltel, Ameritech, AT&T Wireless, Boost, CellularOne, Cingular, Edge Wireless, Sprint PCS, Telus Mobility, T-Mobile, Metro PCS, Nextel, O2, Orange, Qwest, Rogers Wireless, US Cellular, Verizon, Virgin Mobile.</span></p></li>

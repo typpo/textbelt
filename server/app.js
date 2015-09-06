@@ -16,7 +16,14 @@ app.set('view engine', 'jade');
 
 app.use(express.cookieParser());
 app.use(express.static(__dirname + '/public'));
-app.use(express.bodyParser());
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(function(req, res, next) {
+  // Enable CORS so sites can use the API directly in JS.
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 // Enable log messages when sending texts.
 text.debug(true);
