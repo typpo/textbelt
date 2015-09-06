@@ -93,6 +93,9 @@ function textRequestHandler(req, res, number, region, key) {
   if (!ip || ip === '127.0.0.1') {
     ip = req.header('X-Real-IP');
   }
+  if (req.header('CF-Connecting-IP')) {
+    ip = req.header('CF-Connecting-IP');
+  }
 
   var authbox_details = {
     $actionName: 'text',
@@ -100,7 +103,7 @@ function textRequestHandler(req, res, number, region, key) {
   };
 
   if (!number || !req.body.message) {
-    mpq.track('incomplete request');
+    mpq.track('incomplete request', {ip: ip, ip2: ip});
     authbox.log(req, _.extend(authbox_details, {$failureReason: 'incomplete_request'}));
     res.send({success:false, message:'Number and message parameters are required.'});
     return;
@@ -121,18 +124,19 @@ function textRequestHandler(req, res, number, region, key) {
     message__text: message
   });
 
+  var tracking_details = {
+    number: number,
+    message: req.body.message,
+    ip: ip,
+    ip2: ip
+  };
+
   if (banned_numbers.BLACKLIST[number]) {
-    mpq.track('banned number');
+    mpq.track('banned number', tracking_details);
     authbox.log(req, _.extend(authbox_details, {$failureReason: 'banned_number'}));
     res.send({success:false,message:'Sorry, texts to this number are disabled.'});
     return;
   }
-
-  var tracking_details = {
-    number: number,
-    message: req.body.message,
-    ip: ip
-  };
 
   var doSendText = function(response_obj) {
     response_obj = response_obj || {};
@@ -187,8 +191,8 @@ function textRequestHandler(req, res, number, region, key) {
       });
     }, 1000*60*3);
     if (num > 3) {
-      mpq.track('exceeded phone quota');
-      authbox.log(req, _.extend(authbox_details, {$failureReason: 'exceeded_phone_quota'}));
+      //mpq.track('exceeded phone quota', tracking_details);
+      //authbox.log(req, _.extend(authbox_details, {$failureReason: 'exceeded_phone_quota'}));
       res.send({success:false, message:'Exceeded quota for this phone number. ' + number});
       return;
     }
@@ -201,7 +205,7 @@ function textRequestHandler(req, res, number, region, key) {
         return;
       }
       if (num > 75) {
-        mpq.track('exceeded ip quota');
+        mpq.track('exceeded ip quota', tracking_details);
         authbox.log(req, _.extend(authbox_details, {$failureReason: 'exceeded_ip_quota'}));
         res.send({success:false, message:'Exceeded quota for this IP address. ' + ip});
         return;
