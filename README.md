@@ -1,5 +1,7 @@
 ### TextBelt
-TextBelt (http://textbelt.com) is an outgoing SMS API that uses carrier-specific gateways to deliver your text messages for free, and without ads.  The service is fairly reliable and has sent over 100,000 texts.
+TextBelt (http://textbelt.com) is a REST API that sends outgoing SMS. It is available as a public service or as an internally self-hosted server.
+
+Textbelt uses carrier-specific gateways to deliver your text messages for free, and without ads.  The service is fairly reliable and has sent over 1 million texts.
 
 Send a text with a simple POST request:
 
