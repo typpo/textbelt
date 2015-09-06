@@ -27,6 +27,7 @@ Sample failure:
 ```
 {"success":false,"message":"Exceeded quota for this phone number."}
 ```
+
 ### Usage as a module
 
 Though this repository contains an express server so you may run your own
@@ -34,6 +35,7 @@ instance of the web app, you may also use it to send text messages in your
 project. The only requirement is unix/posix `sendmail`, used to forward the message.
 
 For example, to send a text using the default settings:
+
 ```
 var text = require('textbelt');
 
@@ -45,6 +47,7 @@ text.send('9491234567', 'A sample text message!', undefined, function(err) {
 ```
 
 You can also supply a region (valid choices are `us`, `intl`, or `canada`)
+
 ```
 var text = require('textbelt');
 
@@ -57,7 +60,6 @@ text.send('9491234567', 'A sample text message!', 'canada', function(err) {
 text.send('1119491234567', 'Bonjour!', 'intl', function(err) {
 ...
 });
-
 ```
 
 ### Usage as a standalone server
@@ -65,6 +67,8 @@ text.send('1119491234567', 'Bonjour!', 'intl', function(err) {
 Textbelt can be run as a standalone server with: `node server/app.js`.  Be sure to install dependencies first with `npm install`.
 
 By default, the server listens on port 9090 and is configured to accept traffic from a reverse proxy or load balancer such as nginx.  To enable accurate IP rate limiting, the reverse proxy should be configured to set the `X-Real-IP` header.
+
+Don't forget to set `fromAddress` in `lib/text.js` to the email address you want to send from.
 
 ### Canadian and International endpoints
 
@@ -75,6 +79,22 @@ For Canadian texts, curl `http://textbelt.com/canada`.
 For international texts, curl `http://textbelt.com/intl`.
 
 Canadian and international support may not be complete.  Refer to the list of supported carriers.
+
+### Textbelt Clients
+
+go - [dietsche/textbelt](https://github.com/dietsche/textbelt)
+node.js - [minond/textbelt](https://github.com/minond/textbelt), [ajay-gandhi/textbelt](https://github.com/ajay-gandhi/textbelt), [soondobu/mtextbelt](https://github.com/soondobu/mtextbelt)
+php - [ctrlaltdylan/courier](https://github.com/ctrlaltdylan/courier), [securingsincity/phpsms](https://github.com/securingsincity/phpsms)
+bash - [cfalk/MessageMe](https://github.com/cfalk/MessageMe)
+html/js webpage - [mLuby/SMS](https://github.com/mLuby/SMS)
+
+
+Browser extension - [Chrome](https://chrome.google.com/webstore/detail/textbelter/clciehobfheendclpnmbgbalelignpoa), [Firefox](https://addons.mozilla.org/en-US/firefox/addon/textbelter/), [Safari](https://github.com/daluu/textbelt-clients/raw/master/textbelter.safariextz), [Opera](https://addons.opera.com/en/extensions/details/textbelter/?display=en)
+Windows Phone - [TextBelter](https://www.microsoft.com/en-us/store/apps/textbelter/9nblggh1z2dg)
+[SendSMS Mac App](https://itunes.apple.com/app/sendsms/id584131262?mt=12)
+[OSX dashboard widget](https://github.com/daluu/textbelt-clients/releases/download/1.0/TextBelter.wdgt.zip)
+[Windows 7/Vista gadget](https://github.com/daluu/textbelt-clients/releases/download/1.0/textbelter.gadget.zip)
+
 
 ### Notes and Limitations
 
