@@ -1,10 +1,10 @@
 var express = require('express')
   , app = express()
   , _ = require('underscore')
-  , authbox = require('authbox')
   , crypto = require('crypto')
   , exec = require('child_process').exec
   , fs = require('fs')
+  , path = require('path')
   , mixpanel = require('mixpanel')
   , redis = require('redis-url').connect()
   , spawn = require('child_process').spawn
@@ -36,22 +36,28 @@ try {
   banned_numbers = {BLACKLIST: {}};
 }
 
+var banned_ips = {};
+try {
+  var banned_list = fs.readFileSync(path.join(__dirname, './torlist')).toString('utf-8').split('\n');
+  banned_list.map(function(ip) {
+    ip = ip.trim();
+    if (ip != '') {
+      banned_ips[ip] = true;
+    }
+  });
+  console.log(banned_list.length, 'banned ips loaded');
+} catch(e) {
+  console.log(e);
+}
+
+
 var mpq
-  , mixpanel_config
-  , authbox_config;
+  , mixpanel_config;
 try {
   mixpanel_config = require('./mixpanel_config.js');
   mpq = new mixpanel.Client(mixpanel_config.api_key);
 } catch(e) {
   mpq = {track: function() {}};
-}
-
-try {
-  authbox_config = require('./authbox_config.js');
-  authbox.configure(authbox_config);
-  app.use(authbox.middleware);
-} catch(e) {
-  authbox = {log: function() {}};
 }
 
 var access_keys;
@@ -104,14 +110,8 @@ function textRequestHandler(req, res, number, region, key) {
     ip = req.header('CF-Connecting-IP');
   }
 
-  var authbox_details = {
-    $actionName: 'text',
-    $ipAddress: ip
-  };
-
   if (!number || !req.body.message) {
     mpq.track('incomplete request', {ip: ip, ip2: ip});
-    authbox.log(req, _.extend(authbox_details, {$failureReason: 'incomplete_request'}));
     res.send({success:false, message:'Number and message parameters are required.'});
     return;
   }
@@ -122,14 +122,28 @@ function textRequestHandler(req, res, number, region, key) {
     // contains a colon.
     message = ' ' + message;
   }
+  if (ip in banned_ips) {
+    // Shadowban tor ips
+    setTimeout(function() {
+      res.send({success:false});
+    }, 1000);
+    return;
+  }
+  if (message.indexOf('IDSninja') > -1) {
+    setTimeout(function() {
+      res.send({success:true});
+    }, 1000);
+    return;
+  }
+  if (message.indexOf('chat history has been hacked') > -1) {
+    setTimeout(function() {
+      res.send({success:true});
+    }, 1000);
+    return;
+  }
 
   var shasum = crypto.createHash('sha1');
   shasum.update(number);
-  var authbox_digest = shasum.digest('hex');
-  _.extend(authbox_details, {
-    recipient: authbox_digest,
-    message__text: message
-  });
 
   var tracking_details = {
     number: number,
@@ -140,7 +154,6 @@ function textRequestHandler(req, res, number, region, key) {
 
   if (banned_numbers.BLACKLIST[number]) {
     mpq.track('banned number', tracking_details);
-    authbox.log(req, _.extend(authbox_details, {$failureReason: 'banned_number'}));
     res.send({success:false,message:'Sorry, texts to this number are disabled.'});
     return;
   }
@@ -152,7 +165,6 @@ function textRequestHandler(req, res, number, region, key) {
     text.send(number, message, region, function(err) {
       if (err) {
         mpq.track('sendText failed', tracking_details);
-        authbox.log(req, _.extend(authbox_details, {$failureReason: 'gateway_failed'}));
         res.send(_.extend(response_obj,
                           {
                             success:false,
@@ -161,7 +173,6 @@ function textRequestHandler(req, res, number, region, key) {
       }
       else {
         mpq.track('sendText success', tracking_details);
-        authbox.log(req, _.extend(authbox_details, {$success: true}));
         res.send(_.extend(response_obj, {success:true}));
       }
     });
@@ -199,7 +210,6 @@ function textRequestHandler(req, res, number, region, key) {
     }, 1000*60*3);
     if (num > 3) {
       //mpq.track('exceeded phone quota', tracking_details);
-      //authbox.log(req, _.extend(authbox_details, {$failureReason: 'exceeded_phone_quota'}));
       res.send({success:false, message:'Exceeded quota for this phone number. ' + number});
       return;
     }
@@ -213,7 +223,6 @@ function textRequestHandler(req, res, number, region, key) {
       }
       if (num > 75) {
         mpq.track('exceeded ip quota', tracking_details);
-        authbox.log(req, _.extend(authbox_details, {$failureReason: 'exceeded_ip_quota'}));
         res.send({success:false, message:'Exceeded quota for this IP address. ' + ip});
         return;
       }
