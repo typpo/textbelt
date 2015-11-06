@@ -129,18 +129,6 @@ function textRequestHandler(req, res, number, region, key) {
     }, 1000);
     return;
   }
-  if (message.indexOf('IDSninja') > -1) {
-    setTimeout(function() {
-      res.send({success:true});
-    }, 1000);
-    return;
-  }
-  if (message.indexOf('chat history has been hacked') > -1) {
-    setTimeout(function() {
-      res.send({success:true});
-    }, 1000);
-    return;
-  }
 
   var shasum = crypto.createHash('sha1');
   shasum.update(number);
