@@ -1,6 +1,7 @@
 var express = require('express')
   , app = express()
   , _ = require('underscore')
+  , carriers = require('../lib/carriers.js')
   , crypto = require('crypto')
   , exec = require('child_process').exec
   , fs = require('fs')
@@ -83,25 +84,29 @@ app.get('/providers/:region', function(req, res) {
 });
 
 app.post('/text', function(req, res) {
+  if (req.body.getcarriers != null && (req.body.getcarriers == 1 || req.body.getcarriers.toLowerCase() == 'true')) {
+    res.send({success:true, carriers:Object.keys(carriers).sort()});
+    return;
+  }
   var number = stripPhone(req.body.number);
   if (number.length < 9 || number.length > 10) {
     res.send({success:false, message:'Invalid phone number.'});
     return;
   }
-  textRequestHandler(req, res, number, 'us', req.query.key);
+  textRequestHandler(req, res, number, req.body.carrier, 'us', req.query.key);
 });
 
 app.post('/canada', function(req, res) {
-  textRequestHandler(req, res, stripPhone(req.body.number), 'canada', req.query.key);
+  textRequestHandler(req, res, stripPhone(req.body.number), req.body.carrier, 'canada', req.query.key);
 });
 
 app.post('/intl', function(req, res) {
-  textRequestHandler(req, res, stripPhone(req.body.number), 'intl', req.query.key);
+  textRequestHandler(req, res, stripPhone(req.body.number), req.body.carrier, 'intl', req.query.key);
 });
 
 // App helper functions
 
-function textRequestHandler(req, res, number, region, key) {
+function textRequestHandler(req, res, number, carrier, region, key) {
   var ip = req.connection.remoteAddress;
   if (!ip || ip === '127.0.0.1') {
     ip = req.header('X-Real-IP');
@@ -114,6 +119,14 @@ function textRequestHandler(req, res, number, region, key) {
     mpq.track('incomplete request', {ip: ip, ip2: ip});
     res.send({success:false, message:'Number and message parameters are required.'});
     return;
+  }
+  if (carrier != null) {
+    carrier = carrier.toLowerCase();
+    if (carriers[carrier] == null) {
+      res.send({succes:false, message:'Carrier ' + carrier + ' not supported! POST getcarriers=1 to '
+                                                               + 'get a list of supported carriers'});
+      return;
+    }
   }
 
   var message = req.body.message;
@@ -150,7 +163,7 @@ function textRequestHandler(req, res, number, region, key) {
     response_obj = response_obj || {};
 
     // Time to actually send the message
-    text.send(number, message, region, function(err) {
+    text.send(number, message, carrier, region, function(err) {
       if (err) {
         mpq.track('sendText failed', tracking_details);
         res.send(_.extend(response_obj,
