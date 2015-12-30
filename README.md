@@ -64,7 +64,7 @@ text.send('1119491234567', 'Bonjour!', 'intl', function(err) {
 
 ### Usage as a standalone server
 
-Textbelt can be run as a standalone server with: `node server/app.js`.  Be sure to install dependencies first with `npm install`.
+Textbelt can be run as a standalone server with: `node server/app.js`.  Be sure to install dependencies first with `npm install`. This project also relies on redis. To install redis locally, please see the [redis documentation](http://redis.io/topics/quickstart). Before launching the app, ensure redis is running on port 6379 with `redis-server`.
 
 By default, the server listens on port 9090 and is configured to accept traffic from a reverse proxy or load balancer such as nginx.  To enable accurate IP rate limiting, the reverse proxy should be configured to set the `X-Real-IP` header.
 
