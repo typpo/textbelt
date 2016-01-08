@@ -5,7 +5,7 @@ Textbelt uses carrier-specific gateways to deliver your text messages for free, 
 
 Send a text with a simple POST request:
 
-```
+```sh
 $ curl -X POST http://textbelt.com/text \
    -d number=5551234567 \
    -d "message=I sent this message for free with textbelt.com"
@@ -16,7 +16,7 @@ $ curl -X POST http://textbelt.com/text \
 ### Success and Failure
 Sample success:
 
-```
+```json
 {"success":true}
 ```
 
@@ -24,7 +24,7 @@ Note that success means that the message was sent to Textbelt's list of provider
 
 Sample failure:
 
-```
+```json
 {"success":false,"message":"Exceeded quota for this phone number."}
 ```
 
@@ -36,7 +36,7 @@ project. The only requirement is unix/posix `sendmail`, used to forward the mess
 
 For example, to send a text using the default settings:
 
-```
+```js
 var text = require('textbelt');
 
 text.send('9491234567', 'A sample text message!', undefined, function(err) {
@@ -48,7 +48,7 @@ text.send('9491234567', 'A sample text message!', undefined, function(err) {
 
 You can also supply a region (valid choices are `us`, `intl`, or `canada`)
 
-```
+```js
 var text = require('textbelt');
 
 // Canada
