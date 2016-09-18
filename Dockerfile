@@ -61,6 +61,8 @@ RUN sed -i -- "s|fromAddress = 'foo@bar.com'|fromAddress = 'me@mydomain.com'|g" 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# we'll expose default port and then we can port map with docker at runtime
+# no need to customize port in here
 EXPOSE 9090
 
 # Use baseimage-docker's init process.
@@ -68,13 +70,13 @@ CMD ["/sbin/my_init"]
 
 # now you can use try using the docker image
 # - as a server: (then make REST calls to it to send message)
-#   run command : docker run --rm -it -p 9090:9090 typpo/textbelt node server/app.js
+#   run command : docker run --rm -it -p 8080:9090 typpo/textbelt node server/app.js
 # - as node.js module/client:
 #   run command: docker run --rm -it typpo/textbelt node
 #     then copy/paste or type in the code to send message as shown README example
 #   or run command: docker run --rm -it typpo/textbelt node pathTo/yourScript.js
 #     assuming your script has the code that calls the textbelt module to send message
-#   or run command: docker run --rm -it -p 9090:9090 typpo/textbelt bash
+#   or run command: docker run --rm -it -p 8080:9090 typpo/textbelt bash
 #     to be taken to the shell for you to debug and test things out
 #     e.g. start/stop/query redis, nginx, test/use mutt
 #     run textbelt as module in node shell, node script, or start textbelt server
