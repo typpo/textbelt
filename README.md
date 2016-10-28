@@ -86,6 +86,7 @@ Canadian and international support may not be complete.  Refer to the list of su
 
   * ruby - [djds23/textbelt-gem](https://github.com/djds23/textbelt-gem)
   * go - [dietsche/textbelt](https://github.com/dietsche/textbelt)
+  * python - [ksdme/py-textbelt](https://github.com/ksdme/py-textbelt)
   * node.js - [minond/textbelt](https://github.com/minond/textbelt), [ajay-gandhi/textbelt](https://github.com/ajay-gandhi/textbelt), [soondobu/mtextbelt](https://github.com/soondobu/mtextbelt)
   * php - [ctrlaltdylan/courier](https://github.com/ctrlaltdylan/courier), [securingsincity/phpsms](https://github.com/securingsincity/phpsms)
   * bash - [cfalk/MessageMe](https://github.com/cfalk/MessageMe)
