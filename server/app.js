@@ -27,7 +27,9 @@ app.use(function(req, res, next) {
 });
 
 // Enable log messages when sending texts.
-text.debug(true);
+text.config({
+  debugEnabled: true,
+});
 
 // Optional modules
 var banned_numbers;
