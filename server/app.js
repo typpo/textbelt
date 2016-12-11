@@ -125,7 +125,7 @@ function textRequestHandler(req, res, number, carrier, region, key) {
   if (carrier != null) {
     carrier = carrier.toLowerCase();
     if (carriers[carrier] == null) {
-      res.send({succes:false, message:'Carrier ' + carrier + ' not supported! POST getcarriers=1 to '
+      res.send({success:false, message:'Carrier ' + carrier + ' not supported! POST getcarriers=1 to '
                                                                + 'get a list of supported carriers'});
       return;
     }
