@@ -71,7 +71,7 @@ Textbelt also depends on a local installation of `mutt`, the email client (http:
 
 By default, the server listens on port 9090 and is configured to accept traffic from a reverse proxy or load balancer such as nginx.  To enable accurate IP rate limiting, the reverse proxy should be configured to set the `X-Real-IP` header.
 
-Don't forget to set `fromAddress` in `lib/text.js` to the email address you want to send from.
+Don't forget to set `fromAddress` in `lib/config.js` to the email address you want to send from.
 
 ### Canadian and International endpoints
 
