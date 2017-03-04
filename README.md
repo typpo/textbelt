@@ -8,7 +8,7 @@ Send a text with a simple POST request:
 
 ```sh
 $ curl -X POST http://textbelt.com/text \
-   -d number=5551234567 \
+   -d number=+972527022463 \
    -d "message=I sent this message for free with textbelt.com"
 ```
 
