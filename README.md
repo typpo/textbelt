@@ -7,9 +7,10 @@ This project uses carrier-specific gateways to deliver your text messages for fr
 Send a text with a simple POST request:
 
 ```sh
-$ curl -X POST http://textbelt.com/text \
-   -d number=5551234567 \
-   -d "message=I sent this message for free with textbelt.com"
+$ curl -X POST https://textbelt.com/text \
+       --data-urlencode phone='5557727420' \
+       --data-urlencode message='Hello world' \
+       -d key=textbelt
 ```
 
 `number` and `message` parameters are required.
