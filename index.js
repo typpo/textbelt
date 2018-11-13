@@ -1,3 +1,3 @@
-var textbelt = require('./lib/text');
+const textbelt = require('./lib/text');
 
 module.exports = textbelt;

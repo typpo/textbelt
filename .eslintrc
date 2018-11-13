@@ -1,0 +1,21 @@
+{
+  "root": true,
+  "globals": {
+  },
+  "extends": [
+    "airbnb",
+  ],
+  "plugins": [
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": [
+          "node_modules",
+        ]
+      }
+    }
+  },
+  "rules": {
+  }
+}
