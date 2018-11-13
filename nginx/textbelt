@@ -1,5 +1,5 @@
 server {
-    server_name  textbelt.com www.textbelt.com;
+    server_name  yourdomain.com www.yourdomain.com;
     location / {
         proxy_pass_header Server;
         proxy_set_header Host $http_host;
