@@ -7,9 +7,9 @@ This project uses carrier-specific gateways to deliver your text messages for fr
 Send a text with a simple POST request:
 
 ```sh
-$ curl -X POST http://textbelt.com/text \
+$ curl -X POST http://my_textbelt_server/text \
    -d number=5551234567 \
-   -d "message=I sent this message for free with textbelt.com"
+   -d "message=I sent this message for free with Textbelt"
 ```
 
 `number` and `message` parameters are required.
@@ -67,9 +67,9 @@ text.send('1119491234567', 'Bonjour!', 'intl', function(err) {
 
 Textbelt can be run as a standalone server with: `node server/app.js`.  Be sure to install dependencies first with `npm install`. This project also relies on redis. To install redis locally, please see the [redis documentation](http://redis.io/topics/quickstart). Before launching the app, ensure redis is running on port 6379 with `redis-server`.
 
-Textbelt also depends on a local installation of `mutt`, the email client (http://www.mutt.org/).  On Linux (Ubuntu), you can `sudo apt-get install mutt`.  On macs, you can `brew install mutt`.
+Textbelt also depends on a local installation of `mutt`, the email client (http://www.mutt.org/).  On Linux (Ubuntu), you can `sudo apt-get install mutt`.  On macs, you can `brew install mutt`.  Note that you'll have to correctly configure your machine to send mail.  Test out your mail setup by sending yourself an email, or better yet, send your phone a text using the appropriate [email-to-SMS gateway](https://github.com/typpo/textbelt/blob/master/lib/providers.js).
 
-By default, the server listens on port 9090 and is configured to accept traffic from a reverse proxy or load balancer such as nginx.  To enable accurate IP rate limiting, the reverse proxy should be configured to set the `X-Real-IP` header.
+By default, the server listens on port 9090.
 
 Don't forget to set `fromAddress` in `lib/config.js` to the email address you want to send from.
 
@@ -103,9 +103,7 @@ Canadian and international support may not be complete.  Refer to the list of su
 
  * Some carriers are picky about which messages they deliver. A "success" response from Textbelt means that your message was given to the carrier.
 
- *  IP addresses are limited to 75 texts per day.  Phone numbers are limited to 3 texts every 3 minutes.  If you need increased limits, please contact admin@textbelt.com.
-
- *  Some carriers may deliver text messages from "txt@textbelt.com"
+ *  Some carriers may deliver text messages from "txt@textbelt.com", "foo@bar.com", or whatever you have configured as `fromAddress` in `lib/config.js`.
 
  *  Supported U.S. carriers: Alltel, Ameritech, AT&T Wireless, Boost, CellularOne, Cingular, Edge Wireless, Nex-Tech Wireless, Project Fi, Sprint PCS, Telus Mobility, T-Mobile, Metro PCS, Nextel, O2, Orange, Qwest, Rogers Wireless, Ting, US Cellular, Verizon, Virgin Mobile.
 
@@ -116,7 +114,7 @@ Canadian and international support may not be complete.  Refer to the list of su
 ### License (MIT)
 
 TextBelt
-Copyright (C) 2012 by Ian Webster
+Copyright (C) 2018 by Ian Webster
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
