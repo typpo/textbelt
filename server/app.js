@@ -1,16 +1,10 @@
 const express = require('express');
 
+const carriers = require('../lib/carriers.js');
+const providers = require('../lib/providers.js');
+const text = require('../lib/text');
 
 const app = express();
-
-
-const carriers = require('../lib/carriers.js');
-
-
-const exec = require('child_process').exec;
-
-
-const text = require('../lib/text');
 
 // Express config
 app.use(express.json());
@@ -27,57 +21,34 @@ text.config({
   debugEnabled: true,
 });
 
-// App routes
-app.get('/', (req, res) => {
-  res.send("I'm online!");
-});
+// App helper functions.
+function stripPhone(phone) {
+  return (`${phone}`).replace(/\D/g, '');
+}
 
-app.get('/providers/:region', (req, res) => {
-  // Utility function, just to check the providers currently loaded
-  res.send(providers[req.params.region]);
-});
-
-app.post('/text', (req, res) => {
-  if (req.body.getcarriers != null && (req.body.getcarriers == 1 || req.body.getcarriers.toLowerCase() == 'true')) {
-    res.send({ success: true, carriers: Object.keys(carriers).sort() });
-    return;
-  }
-  const number = stripPhone(req.body.number);
-  if (number.length < 9 || number.length > 10) {
-    res.send({ success: false, message: 'Invalid phone number.' });
-    return;
-  }
-  textRequestHandler(req, res, number, req.body.carrier, 'us', req.query.key);
-});
-
-app.post('/canada', (req, res) => {
-  textRequestHandler(req, res, stripPhone(req.body.number), req.body.carrier, 'canada', req.query.key);
-});
-
-app.post('/intl', (req, res) => {
-  textRequestHandler(req, res, stripPhone(req.body.number), req.body.carrier, 'intl', req.query.key);
-});
-
-// App helper functions
-
-function textRequestHandler(req, res, number, carrier, region, key) {
+function textRequestHandler(req, res, number, carrier, region) {
   if (!number || !req.body.message) {
     res.send({ success: false, message: 'Number and message parameters are required.' });
     return;
   }
-  if (carrier != null) {
-    carrier = carrier.toLowerCase();
-    if (carriers[carrier] == null) {
-      res.send({
-        success: false,
-        message: `Carrier ${carrier} not supported! POST getcarriers=1 to `
-                                                               + 'get a list of supported carriers',
-      });
-      return;
-    }
+  if (!carrier) {
+    res.send({
+      success: false,
+      message: 'No carrier specified',
+    });
+    return;
+  }
+  const carrierKey = carrier.toLowerCase();
+  if (carriers[carrierKey] == null) {
+    res.send({
+      success: false,
+      message: `Carrier ${carrier} not supported! POST getcarriers=1 to `
+                                                             + 'get a list of supported carriers',
+    });
+    return;
   }
 
-  let message = req.body.message;
+  let { message } = req.body;
   if (message.indexOf(':') > -1) {
     // Handle problem with vtext where message would not get sent properly if it
     // contains a colon.
@@ -85,7 +56,7 @@ function textRequestHandler(req, res, number, carrier, region, key) {
   }
 
   // Time to actually send the message
-  text.send(number, message, carrier, region, (err) => {
+  text.send(number, message, carrierKey, region, (err) => {
     if (err) {
       res.send({
         success: false,
@@ -97,12 +68,42 @@ function textRequestHandler(req, res, number, carrier, region, key) {
   });
 }
 
-function stripPhone(phone) {
-  return (`${phone}`).replace(/\D/g, '');
-}
+// App routes
+app.get('/', (req, res) => {
+  res.send("I'm online!");
+});
+
+app.get('/providers/:region', (req, res) => {
+  // Utility function, just to check the providers currently loaded
+  res.send(providers[req.params.region]);
+});
+
+app.post('/text', (req, res) => {
+  if (req.body.getcarriers != null
+      && (req.body.getcarriers === '1'
+       || req.body.getcarriers.toLowerCase() === 'true')) {
+    res.send({ success: true, carriers: Object.keys(carriers).sort() });
+    return;
+  }
+  const number = stripPhone(req.body.number);
+  if (number.length < 9 || number.length > 10) {
+    res.send({ success: false, message: 'Invalid phone number.' });
+    return;
+  }
+  textRequestHandler(req, res, number, req.body.carrier, 'us');
+});
+
+app.post('/canada', (req, res) => {
+  textRequestHandler(req, res, stripPhone(req.body.number), req.body.carrier, 'canada');
+});
+
+app.post('/intl', (req, res) => {
+  textRequestHandler(req, res, stripPhone(req.body.number), req.body.carrier, 'intl');
+});
 
 // Start server
 const port = process.env.PORT || 9090;
 app.listen(port, () => {
+  // eslint-disable-next-line no-console
   console.log('Listening on', port);
 });
