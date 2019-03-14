@@ -5,7 +5,8 @@
     "url": "git@github.com:typpo/textbelt.git"
   },
   "dependencies": {
-    "express": ">=4.0.0"
+    "express": ">=4.0.0",
+    "nodemailer": "^5.1.1"
   },
   "devDependencies": {
     "eslint": "^5.9.0",
