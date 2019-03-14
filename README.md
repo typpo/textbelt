@@ -42,7 +42,15 @@ Sample failure:
 
 Though this repository contains an express server so you may run your own
 instance of the web app, you may also use it to send text messages in your
-project. The only requirement is unix/posix `sendmail`, used to forward the message.
+project. 
+
+#### Configuration:
+This project uses [`nodemailer`](https://www.npmjs.com/package/nodemailer) for sending emails. Set up `lib/config.js` with the following: 
+
+- **`transport`** should be a Nodemailer transport [documented here](https://nodemailer.com/plugins/create/#transports)
+- **`mailOptions`** fields should include at least include the `from` field, but you can include any of the fields [documented here](https://nodemailer.com/message/). 
+
+A sample transport with SMTP sending is included.
 
 For example, to send a text using the default settings:
 
