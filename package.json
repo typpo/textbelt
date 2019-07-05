@@ -17,7 +17,7 @@
   },
   "main": "app",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 4.3.2"
   },
   "version": "0.0.3",
   "scripts": {
