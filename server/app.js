@@ -31,21 +31,18 @@ function textRequestHandler(req, res, number, carrier, region) {
     res.send({ success: false, message: 'Number and message parameters are required.' });
     return;
   }
-  if (!carrier) {
-    res.send({
-      success: false,
-      message: 'No carrier specified',
-    });
-    return;
-  }
-  const carrierKey = carrier.toLowerCase();
-  if (carriers[carrierKey] == null) {
-    res.send({
-      success: false,
-      message: `Carrier ${carrier} not supported! POST getcarriers=1 to `
-                                                             + 'get a list of supported carriers',
-    });
-    return;
+
+  let carrierKey = null;
+  if (carrier) {
+    carrierKey = carrier.toLowerCase();
+    if (carriers[carrierKey] == null) {
+      res.send({
+        success: false,
+        message: `Carrier ${carrier} not supported! POST getcarriers=1 to `
+                                                               + 'get a list of supported carriers',
+      });
+      return;
+    }
   }
 
   let { message } = req.body;
