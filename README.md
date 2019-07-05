@@ -42,13 +42,14 @@ Sample failure:
 
 Though this repository contains an express server so you may run your own
 instance of the web app, you may also use it to send text messages in your
-project. 
+project.
 
 #### Configuration:
-This project uses [`nodemailer`](https://www.npmjs.com/package/nodemailer) for sending emails. Set up `lib/config.js` with the following: 
+
+This project uses [`nodemailer`](https://www.npmjs.com/package/nodemailer) for sending emails. Set up `lib/config.js` with the following:
 
 - **`transport`** should be a Nodemailer transport [documented here](https://nodemailer.com/plugins/create/#transports)
-- **`mailOptions`** fields should include at least include the `from` field, but you can include any of the fields [documented here](https://nodemailer.com/message/). 
+- **`mailOptions`** fields should include at least include the `from` field, but you can include any of the fields [documented here](https://nodemailer.com/message/).
 
 A sample transport with SMTP sending is included.
 
@@ -82,9 +83,7 @@ text.send('1119491234567', 'Bonjour!', 'intl', function(err) {
 
 ### Usage as a standalone server
 
-Textbelt can be run as a standalone server with: `node server/app.js`.  Be sure to install dependencies first with `npm install`. This project also relies on redis. To install redis locally, please see the [redis documentation](http://redis.io/topics/quickstart). Before launching the app, ensure redis is running on port 6379 with `redis-server`.
-
-Textbelt also depends on a local installation of `mutt`, the email client (http://www.mutt.org/).  On Linux (Ubuntu), you can `sudo apt-get install mutt`.  On macs, you can `brew install mutt`.  Note that you'll have to correctly configure your machine to send mail.  Test out your mail setup by sending yourself an email, or better yet, send your phone a text using the appropriate [email-to-SMS gateway](https://github.com/typpo/textbelt/blob/master/lib/providers.js).
+Textbelt can be run as a standalone server with: `node server/app.js`.  Be sure to install dependencies first with `npm install` and you've configured nodemailer in `lib/config.js`. This project also relies on redis. To install redis locally, please see the [redis documentation](http://redis.io/topics/quickstart). Before launching the app, ensure redis is running on port 6379 with `redis-server`.
 
 By default, the server listens on port 9090.
 
