@@ -22,6 +22,7 @@
   "version": "0.0.3",
   "scripts": {
     "start": "node server/app.js",
-    "lint": "./node_modules/.bin/eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   }
 }
