@@ -57,7 +57,7 @@ function textRequestHandler(req, res, number, carrier, region) {
     if (err) {
       res.send({
         success: false,
-        message: 'Communication with SMS gateway failed.',
+        message: `Communication with SMS gateway failed. Did you configure mail transport in lib/config.js?  Error message: '${err.message}'`,
       });
     } else {
       res.send({ success: true });
