@@ -8,7 +8,7 @@ const app = express();
 
 // Express config
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   // Enable CORS so sites can use the API directly in JS.
   res.header('Access-Control-Allow-Origin', '*');
