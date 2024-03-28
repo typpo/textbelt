@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "express": "^4.19.2",
-    "nodemailer": "^5.1.1"
+    "nodemailer": "^6.9.9"
   },
   "devDependencies": {
     "eslint": "^5.9.0",
